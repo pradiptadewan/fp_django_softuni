@@ -1,6 +1,17 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from .models import Room, Booking, Review  # Pastikan Anda telah mengimpor model yang benar
 
+# Form untuk registrasi pengguna
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+# Form untuk pemesanan kamar
 class BookingForm(forms.ModelForm):
     room = forms.ModelChoiceField(queryset=Room.objects.all(), widget=forms.Select)
 
@@ -18,20 +29,18 @@ class BookingForm(forms.ModelForm):
 
         return cleaned_data
 
-class RegisterForm(forms.Form):
-    username = forms.CharField(max_length=100)
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label='Confirm Password')
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
-        if password != confirm_password:
-            raise forms.ValidationError("Password does not match!")
-        return cleaned_data
-
+# Form untuk ulasan
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['rating', 'comment']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        rating = cleaned_data.get('rating')
+
+        # Validasi rating agar hanya antara 1 dan 5
+        if rating and not (1 <= rating <= 5):
+            raise forms.ValidationError("Rating harus antara 1 hingga 5.")
+
+        return cleaned_data

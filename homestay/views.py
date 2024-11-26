@@ -1,38 +1,51 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.views.generic import ListView, DetailView, CreateView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Booking, Room, Homestay, Review
 from .forms import BookingForm, RegisterForm, ReviewForm
 
+# Home Page
 def home(request):
-    return render(request, 'homestay/index.html')
+    return render(request, 'homestay/home.html')
 
+# About Page
 def about(request):
     return render(request, 'homestay/about.html')
 
-def rooms_list(request):
-    rooms = Room.objects.all()
-    return render(request, 'homestay/rooms.html', {'rooms': rooms})
+# Room List View (CBV)
+class RoomListView(ListView):
+    model = Room
+    template_name = 'homestay/rooms.html'
+    context_object_name = 'rooms'
 
-def room_detail(request, pk):
-    room = Room.objects.get(pk=pk)
-    return render(request, 'homestay/room_detail.html', {'room': room})
+# Room Detail View (CBV)
+class RoomDetailView(DetailView):
+    model = Room
+    template_name = 'homestay/room_detail.html'
+    context_object_name = 'room'
 
+# Contact Page
 def contact(request):
     return render(request, 'homestay/contact.html')
 
+# Register User
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Your account has been created successfully!')
             return redirect('login')
     else:
         form = RegisterForm()
     return render(request, 'homestay/register.html', {'form': form})
 
+# Login User
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -42,62 +55,90 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                messages.success(request, 'You have successfully logged in!')
                 return redirect('home')
+            else:
+                messages.error(request, 'Invalid username or password')
+        else:
+            messages.error(request, 'Invalid username or password')
     else:
         form = AuthenticationForm()
     return render(request, 'homestay/login.html', {'form': form})
 
+# Logout User
 def logout_view(request):
     logout(request)
+    messages.success(request, 'You have successfully logged out.')
     return redirect('home')
 
-@login_required  # Memastikan pengguna login sebelum mengakses profile
+# Profile Page
+@login_required
 def profile(request):
     return render(request, 'homestay/profile.html')
 
-def booking_form(request, room_id):
-    room = Room.objects.get(pk=room_id)
-    if request.method == 'POST':
-        form = BookingForm(request.POST)
-        if form.is_valid():
-            booking = form.save(commit=False)
-            booking.room = room
-            booking.user = request.user
-            booking.save()
-            return redirect('booking_confirm')
-    else:
-        form = BookingForm()
-    return render(request, 'homestay/booking_form.html', {'form': form, 'room': room})
+# Booking Create View
+class BookingCreateView(LoginRequiredMixin, CreateView):
+    model = Booking
+    form_class = BookingForm
+    template_name = 'homestay/booking_form.html'
 
+    def form_valid(self, form):
+        room = Room.objects.get(pk=self.kwargs['pk'])
+        if room.is_available:
+            form.instance.room = room
+            form.instance.user = self.request.user
+            return super().form_valid(form)
+        else:
+            form.add_error(None, 'This room is not available.')
+            return self.form_invalid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('booking_confirm')
+
+# Booking Confirmation
 def booking_confirm(request):
     return render(request, 'homestay/booking_confirm.html')
 
-@login_required  # Memastikan pengguna login untuk melihat bookings
-def bookings(request):
-    bookings = Booking.objects.filter(user=request.user)
-    return render(request, 'homestay/bookings.html', {'bookings': bookings})
+# User Bookings List View
+class UserBookingListView(LoginRequiredMixin, ListView):
+    model = Booking
+    template_name = 'homestay/bookings.html'
+    context_object_name = 'bookings'
 
-def homestays_list(request):
-    homestays = Homestay.objects.all()
-    return render(request, 'homestay/homestays.html', {'homestays': homestays})
+    def get_queryset(self):
+        return Booking.objects.filter(user=self.request.user)
 
-def homestay_detail(request, pk):
-    homestay = Homestay.objects.get(pk=pk)
-    rooms = Room.objects.filter(homestay=homestay)
-    reviews = Review.objects.filter(homestay=homestay).order_by('-created_at')
-    return render(request, 'homestay/homestay_detail.html', {'homestay': homestay, 'rooms': rooms, 'reviews': reviews})
+# Homestay List View
+class HomestayListView(ListView):
+    model = Homestay
+    template_name = 'homestay/homestays.html'
+    context_object_name = 'homestays'
 
-@login_required  # Memastikan pengguna login untuk menambahkan review
-def add_review(request, homestay_id):
-    homestay = Homestay.objects.get(pk=homestay_id)
-    if request.method == 'POST':
-        review_form = ReviewForm(request.POST)
-        if review_form.is_valid():
-            review = review_form.save(commit=False)
-            review.homestay = homestay
-            review.user = request.user
-            review.save()
-            return redirect('homestay_detail', pk=homestay_id)
-    else:
-        review_form = ReviewForm()
-    return render(request, 'homestay/add_review.html', {'review_form': review_form, 'homestay': homestay})
+# Homestay Detail View
+class HomestayDetailView(DetailView):
+    model = Homestay
+    template_name = 'homestay/homestay_detail.html'
+    context_object_name = 'homestay'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        homestay = self.get_object()
+        context['rooms'] = Room.objects.filter(homestay=homestay).order_by('room_number')
+        context['reviews'] = Review.objects.filter(homestay=homestay).order_by('-created_at')
+        return context
+
+# Add Review View
+class AddReviewView(LoginRequiredMixin, CreateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'homestay/add_review.html'
+
+    def form_valid(self, form):
+        homestay = Homestay.objects.get(pk=self.kwargs['pk'])
+        form.instance.homestay = homestay
+        form.instance.user = self.request.user
+        messages.success(self.request, 'Your review has been posted successfully!')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('homestay_detail', kwargs={'pk': self.kwargs['pk']})

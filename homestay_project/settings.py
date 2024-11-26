@@ -3,21 +3,15 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# Secret key, pastikan untuk mengganti dengan yang lebih aman di produksi
 SECRET_KEY = 'django-insecure-zv32!@2@n6l5a=*4-jl%!s(#(!wau(rs8xas1o(l85z2$%84#y'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# Debugging settings (Hanya diaktifkan di development, nonaktifkan di production)
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
-
-# Application definition
-
+# Daftar aplikasi yang terinstal
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -25,10 +19,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'homestay',
-
+    'homestay',  # Aplikasi custom
 ]
 
+# Middleware yang digunakan oleh aplikasi
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -37,16 +31,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Untuk static files di produksi
 ]
 
 ROOT_URLCONF = 'homestay_project.urls'
 
+# Pengaturan template
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],  # Menentukan folder template di project
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -54,6 +48,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.static',
             ],
         },
     },
@@ -61,10 +56,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'homestay_project.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# Pengaturan database PostgreSQL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -76,10 +68,7 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
+# Validasi password
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -95,40 +84,30 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+# Pengaturan lokal dan waktu
+LANGUAGE_CODE = 'id-id'  # Mengganti bahasa ke Bahasa Indonesia
+TIME_ZONE = 'Asia/Jakarta'  # Mengganti zona waktu ke waktu Indonesia
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-import os
-
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+# Pengaturan untuk file statis (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
+
+# Pengaturan untuk folder statis lokal yang bisa diakses selama pengembangan
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    BASE_DIR / 'static',  # Folder ini untuk menyimpan file statis tambahan
 ]
 
+# Folder tempat file statis siap di-deploy untuk produksi
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
+# Pengaturan untuk file media (misalnya gambar yang diupload)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
+# Pengaturan untuk ID otomatis pada model
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Pengaturan login
+LOGIN_URL = 'login'  # Mengarahkan pengguna ke halaman login
+LOGIN_REDIRECT_URL = 'profile'  # Setelah login, pengguna diarahkan ke halaman profile

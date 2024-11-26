@@ -1,25 +1,39 @@
 from django.urls import path
 from . import views
+from .views import (
+    home, about, contact,
+    RoomListView, RoomDetailView,
+    BookingCreateView, booking_confirm,
+    UserBookingListView,
+    HomestayListView, HomestayDetailView,
+    AddReviewView,
+    register, login_view, logout_view, profile
+)
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
-    path('', views.home, name='home'),  # Halaman utama
-    path('about/', views.about, name='about'),
-    path('rooms/', views.rooms_list, name='rooms'),
-    path('rooms/<int:pk>/', views.room_detail, name='room_detail'),
-    path('contact/', views.contact, name='contact'),
-    path('register/', views.register, name='register'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-    path('profile/', views.profile, name='profile'),
+    # Halaman Utama dan Informasi Umum
+    path('', home, name='home'),  # Halaman utama
+    path('about/', about, name='about'),  # Halaman about
+    path('contact/', contact, name='contact'),  # Halaman contact
+
+    # Rooms
+    path('rooms/', RoomListView.as_view(), name='rooms'),  # Daftar kamar
+    path('rooms/<int:pk>/', RoomDetailView.as_view(), name='room_detail'),  # Detail kamar
+
+    # User Authentication
+    path('register/', register, name='register'),  # Halaman registrasi
+    path('login/', login_view, name='login'),  # Halaman login
+    path('logout/', logout_view, name='logout'),  # Halaman logout
+    path('profile/', login_required(profile), name='profile'),  # Profil pengguna (login diperlukan)
 
     # Booking
-    path('booking/<int:room_id>/', views.booking_form, name='booking_form'),
-    path('booking/confirm/', views.booking_confirm, name='booking_confirm'),
-    path('bookings/', views.bookings, name='bookings'),
+    path('booking/<int:pk>/', BookingCreateView.as_view(), name='booking_form'),  # Form booking
+    path('booking/confirm/', booking_confirm, name='booking_confirm'),  # Konfirmasi booking
+    path('bookings/', login_required(UserBookingListView.as_view()), name='bookings'),  # Daftar booking pengguna (login diperlukan)
 
-    # Homestay
-    path('homestays/', views.homestays_list, name='homestays'), # Daftar homestay
-    path('homestays/<int:pk>/', views.homestay_detail, name='homestay_detail'),
-    path('homestays/<int:homestay_id>/add_review/', views.add_review, name='add_review'),
-
+    # Homestays
+    path('homestays/', HomestayListView.as_view(), name='homestays'),  # Daftar homestay
+    path('homestays/<int:pk>/', HomestayDetailView.as_view(), name='homestay_detail'),  # Detail homestay
+    path('homestays/<int:pk>/add_review/', AddReviewView.as_view(), name='add_review'),  # Tambah review
 ]
