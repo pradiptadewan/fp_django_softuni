@@ -1,0 +1,31 @@
+{% extends 'homestay/base.html' %}
+{% block title %}Homestay - My Bookings{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mt-4">My Bookings</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Room</th>
+        <th>Check In</th>
+        <th>Check Out</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in bookings %}
+      <tr>
+        <td>{{ booking.room.name }}</td>
+        <td>{{ booking.check_in|date:"M d, Y" }}</td>
+        <td>{{ booking.check_out|date:"M d, Y" }}</td>
+        <td>
+          <a href="{% url 'booking_detail' booking.id %}" class="btn btn-info btn-sm">View</a>
+          <a href="{% url 'booking_delete' booking.id %}" class="btn btn-danger btn-sm">Cancel</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

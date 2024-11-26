@@ -1,0 +1,13 @@
+{% extends 'homestay/base.html' %}
+{% block title %}Homestay - Booking Confirmation{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mt-4">Booking Confirmation</h1>
+  <p class="lead">
+    Your booking has been confirmed. Thank you for choosing our homestay!
+  </p>
+  <p>You can view your booking details and manage your reservation in the "My Bookings" section.</p>
+  <a href="{% url 'bookings' %}" class="btn btn-primary">View My Bookings</a>
+</div>
+{% endblock %}

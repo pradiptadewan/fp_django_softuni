@@ -1,0 +1,25 @@
+{% extends 'homestay/base.html' %}
+
+{% block title %}Homestay - Profile{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="mt-4">Profil Saya</h1>
+        <p class="lead">Selamat datang, {{ request.user.username }}!</p>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Informasi Profil</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Username: {{ request.user.username }}</li>
+                    <li class="list-group-item">Email: {{ request.user.email }}</li>
+                    <li class="list-group-item">Nama Lengkap: {{ request.user.get_full_name }}</li>
+                    <li class="list-group-item">Alamat: {{ request.user.address }}</li>
+                    <li class="list-group-item">Nomor Telepon: {{ request.user.phone }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <a href="{% url 'edit_profile' %}" class="btn btn-primary mt-3">Edit Profil</a>
+    </div>
+{% endblock %}

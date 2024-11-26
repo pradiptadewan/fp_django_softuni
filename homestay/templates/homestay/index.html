@@ -1,0 +1,108 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homestay - Your Home Away From Home</title>
+    <link rel="stylesheet" href="{% static 'homestay/css/style.css' %}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Welcome to Our Homestay</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'rooms' %}">Rooms</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div id="hero-carousel" class="owl-carousel owl-theme">
+                <div class="item">
+                    <img src="{% static 'homestay/images/g1.jpg' %}" alt="Hero Image 1">
+                </div>
+                <div class="item">
+                    <img src="{% static 'homestay/images/g2.jpg' %}" alt="Hero Image 2">
+                </div>
+                <div class="item">
+                    <img src="{% static 'homestay/images/g3.jpg' %}" alt="Hero Image 3">
+                </div>
+            </div>
+            <div class="hero-text">
+                <h2>Experience the Comfort of Home</h2>
+                <p>Discover our cozy and welcoming homestay, perfect for your next vacation or business trip.</p>
+                <!-- Tombol Book Now mengarah ke halaman 'booking' -->
+                <a href="{% url 'bookings' %}" class="button">Book Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>What We Offer</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <img src="{% static 'homestay/images/g1.jpg' %}" alt="Feature 1">
+                    <h3>Comfortable Rooms</h3>
+                    <p>Enjoy spacious and well-appointed rooms with modern amenities.</p>
+                </div>
+                <div class="feature">
+                    <img src="{% static 'homestay/images/g2.jpg' %}" alt="Feature 2">
+                    <h3>Delicious Breakfast</h3>
+                    <p>Start your day with a delicious breakfast prepared with fresh ingredients.</p>
+                </div>
+                <div class="feature">
+                    <img src="{% static 'homestay/images/g3.jpg' %}" alt="Feature 3">
+                    <h3>Friendly Service</h3>
+                    <p>Our friendly staff is always available to assist you with any needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Homestay. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'homestay/js/script.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#hero-carousel').owlCarousel({
+                loop:true,
+                margin:10,
+                nav:true,
+                responsive:{
+                    0:{
+                        items:1
+                    },
+                    600:{
+                        items:1
+                    },
+                    1000:{
+                        items:1
+                    }
+                }
+            })
+        })
+    </script>
+</body>
+</html>
