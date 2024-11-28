@@ -19,7 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'homestay',  # Aplikasi custom
+    'homestay',
 ]
 
 # Middleware yang digunakan oleh aplikasi
@@ -94,8 +94,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Pengaturan untuk folder statis lokal yang bisa diakses selama pengembangan
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # Folder ini untuk menyimpan file statis tambahan
+STATICFILES_DIRS = [ BASE_DIR / 'static',  # Folder ini untuk menyimpan file statis tambahan
 ]
 
 # Folder tempat file statis siap di-deploy untuk produksi

@@ -1,38 +1,36 @@
 from django import forms
-from django.contrib.auth.models import User  # Menggunakan model User bawaan Django
-from .models import Room, Booking  # Mengimpor model yang diperlukan
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from .models import Booking, Review, UserProfile, Room
 
+# Form Registrasi Pengguna
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+# Form Pemesanan Kamar
 class BookingForm(forms.ModelForm):
-    room = forms.ModelChoiceField(queryset=Room.objects.all(), widget=forms.Select)
-
     class Meta:
         model = Booking
-        fields = ['room', 'check_in', 'check_out', 'number_of_guests']
+        fields = ['check_in', 'check_out', 'guest_count']
 
-    def clean(self):
-        cleaned_data = super().clean()
-        arrival_date = cleaned_data.get('check_in')
-        departure_date = cleaned_data.get('check_out')
-
-        if arrival_date and departure_date and arrival_date >= departure_date:
-            raise forms.ValidationError("Tanggal kedatangan harus sebelum tanggal keberangkatan.")
-
-        return cleaned_data
-
-class RegisterForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirm_password = forms.CharField(widget=forms.PasswordInput)
-
+# Form Review
+class ReviewForm(forms.ModelForm):
     class Meta:
-        model = User  # Menggunakan model User bawaan Django
-        fields = ['username', 'email', 'password', 'confirm_password']
+        model = Review
+        fields = ['rating', 'comment']
 
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
+# Form untuk Mengedit Profil Pengguna
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'phone_number', 'address']
 
-        if password != confirm_password:
-            raise forms.ValidationError("Password tidak cocok")
-
-        return cleaned_data
+# Form untuk Mengedit Room
+class RoomUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = ['name', 'description', 'price', 'availability', 'image']

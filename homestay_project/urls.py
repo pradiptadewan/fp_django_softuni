@@ -2,6 +2,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('homestay.urls')),  # Pastikan untuk menyertakan aplikasi 'homestay'
+    path('admin/', admin.site.urls),  # Admin page
+    path('', include('homestay.urls')),  # Include URLs from homestay app
 ]

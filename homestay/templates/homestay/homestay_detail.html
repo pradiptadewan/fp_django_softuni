@@ -1,0 +1,27 @@
+{% extends 'homestay/base.html' %}
+
+
+{% block content %}
+  <h1>{{ homestay.name }}</h1>
+  <p>{{ homestay.description }}</p>
+  <p>Location: {{ homestay.location }}</p>
+  <p>Price per night: {{ homestay.price }}</p>
+
+  <h2>Rooms</h2>
+  <ul>
+    {% for room in rooms %}
+      <li>{{ room.name }} - {{ room.price }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Reviews</h2>
+  <ul>
+    {% for review in reviews %}
+      <li>{{ review.user.username }}: {{ review.content }}</li>
+    {% empty %}
+      <p>No reviews yet.</p>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'add_review' pk=homestay.pk %}">Add Review</a>
+{% endblock %}

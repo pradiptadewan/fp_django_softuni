@@ -1,0 +1,15 @@
+{% extends 'homestay/base.html' %}
+
+
+{% block content %}
+  <h1>Our Homestays</h1>
+  <ul>
+    {% for homestay in homestays %}
+      <li>
+        <a href="{% url 'homestay_detail' pk=homestay.pk %}">{{ homestay.name }}</a>
+      </li>
+    {% empty %}
+      <p>No homestays available.</p>
+    {% endfor %}
+  </ul>
+{% endblock %}

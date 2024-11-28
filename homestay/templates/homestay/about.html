@@ -1,59 +1,73 @@
-    {% extends 'homestay/base.html' %}
+{% extends 'homestay/base.html' %}
 {% load static %}
 
 {% block title %}Homestay - About Us{% endblock %}
 
-    {% block content %}
-    <div class="container mt-5">
-      <h1 class="mb-4">About Us</h1>
-      <p class="lead">
-        Welcome to our cozy homestay, where we offer a comfortable and relaxing
-        stay for travelers like you. Discover more about our story, our passion for
-        hospitality, and what makes us special!
-      </p>
+{% block content %}
+<div class="container-fluid bg-about py-5" style="background-image: url('{% static 'homestay/images/B.jpeg' %}'); background-size: cover; background-position: center;">
+  <div class="container text-center text-white">
+    <h1 class="display-3 mb-3 font-weight-bold">About Us</h1>
+    <p class="lead mb-4">Welcome to our cozy homestay, where every guest is treated like family. Let us tell you more about our story and passion for providing unforgettable experiences.</p>
+  </div>
+</div>
 
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <img src="{% static 'homestay/images/g2.jpg' %}" alt="About Us" class="img-fluid rounded">
-        </div>
-        <div class="col-md-6">
-          <h2>Our Mission</h2>
-          <p>
-            Our mission is to provide a warm and welcoming home away from home for
-            our guests, ensuring a memorable and enjoyable experience during their
-            stay. We strive to create a comfortable and friendly atmosphere where
-            guests can feel relaxed and at ease.
-          </p>
+<div class="container py-5">
+  <div class="row align-items-center">
+    <div class="col-lg-6 mb-4">
+      <img src="{% static 'homestay/images/A.jpeg' %}" alt="Our Mission" class="img-fluid rounded shadow-lg">
+    </div>
+    <div class="col-lg-6 mb-4">
+      <h2 class="h2 text-primary">Our Mission</h2>
+      <p class="text-muted">
+        Our mission is to provide a home away from home, offering a sanctuary for travelers seeking comfort, peace, and hospitality. Every guest leaves with a smile, and we aim to make their experience memorable.
+      </p>
+    </div>
+  </div>
+
+  <div class="row align-items-center mt-5">
+    <div class="col-lg-6 mb-4 order-lg-2">
+      <img src="{% static 'homestay/images/C.jpeg' %}" alt="Our Team" class="img-fluid rounded shadow-lg">
+    </div>
+    <div class="col-lg-6 mb-4">
+      <h2 class="h2 text-primary">Meet Our Team</h2>
+      <p class="text-muted">
+        Our team is the heart of our homestay, dedicated to ensuring every guest feels at home. From the owners to the staff, we work together to create the best experience for everyone who walks through our doors.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="bg-light py-5">
+  <div class="container">
+    <h2 class="text-center text-primary mb-5">Our Amazing Team</h2>
+    <div class="row">
+      <div class="col-md-4 text-center mb-4">
+        <div class="team-member">
+          <img src="{% static 'homestay/images/D.jpeg' %}" alt="Team Member 1" class="img-fluid rounded-circle mb-3 shadow-lg" style="width: 160px; height: 160px;">
+          <h5 class="text-dark">John Doe</h5>
+          <p class="text-muted">Owner</p>
         </div>
       </div>
-
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <h2>Our Team</h2>
-          <p>
-            Meet our dedicated team, passionate about providing exceptional
-            service and creating unforgettable experiences for our guests.
-          </p>
+      <div class="col-md-4 text-center mb-4">
+        <div class="team-member">
+          <img src="{% static 'homestay/images/E.jpeg' %}" alt="Team Member 2" class="img-fluid rounded-circle mb-3 shadow-lg" style="width: 160px; height: 160px;">
+          <h5 class="text-dark">Jane Smith</h5>
+          <p class="text-muted">Manager</p>
         </div>
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-4 text-center">
-              <img src="{% static 'homestay/images/g1.jpg' %}" alt="Team Member 1" class="img-fluid rounded-circle mb-2" style="width: 100px; height: 100px;">
-              <p>John Doe</p>
-              <p>Owner</p>
-            </div>
-            <div class="col-md-4 text-center">
-              <img src="{% static 'homestay/images/g1.jpg' %}" alt="Team Member 2" class="img-fluid rounded-circle mb-2" style="width: 100px; height: 100px;">
-              <p>Jane Smith</p>
-              <p>Manager</p>
-            </div>
-            <div class="col-md-4 text-center">
-              <img src="{% static 'homestay/images/g1.jpg' %}" alt="Team Member 3" class="img-fluid rounded-circle mb-2" style="width: 100px; height: 100px;">
-              <p>David Lee</p>
-              <p>Staff</p>
-            </div>
-          </div>
+      </div>
+      <div class="col-md-4 text-center mb-4">
+        <div class="team-member">
+          <img src="{% static 'homestay/images/F.jpeg' %}" alt="Team Member 3" class="img-fluid rounded-circle mb-3 shadow-lg" style="width: 160px; height: 160px;">
+          <h5 class="text-dark">David Lee</h5>
+          <p class="text-muted">Staff</p>
         </div>
       </div>
     </div>
-    {% endblock %}
+  </div>
+</div>
+
+<div class="container text-center mt-5">
+  <a href="#" class="btn btn-lg btn-primary px-5 py-3">Join Us</a>
+</div>
+
+{% endblock %}

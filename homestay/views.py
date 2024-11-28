@@ -1,13 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Booking, Room, Homestay, Review
-from .forms import BookingForm, RegisterForm, ReviewForm
+from .models import Booking, Room, Homestay, Review, UserProfile
+from .form import BookingForm, RegisterForm, ReviewForm, UserProfileForm, RoomUpdateForm
 
 # Home Page
 def home(request):
@@ -38,7 +38,9 @@ def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()  # Simpan pengguna baru
+            # Buat UserProfile untuk pengguna tersebut
+            UserProfile.objects.create(user=user)
             messages.success(request, 'Your account has been created successfully!')
             return redirect('login')
     else:
@@ -74,7 +76,28 @@ def logout_view(request):
 # Profile Page
 @login_required
 def profile(request):
-    return render(request, 'homestay/profile.html')
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        # Jika profil tidak ada, arahkan ke halaman edit profil
+        messages.error(request, 'Please complete your profile information.')
+        return redirect('edit_profile')  # Arahkan ke halaman edit profil
+
+    return render(request, 'homestay/profile.html', {'profile': profile})
+
+# Edit Profile
+@login_required
+def edit_profile(request):
+    profile = get_object_or_404(UserProfile, user=request.user)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=profile)
+    return render(request, 'homestay/edit_profile.html', {'form': form})
 
 # Booking Create View
 class BookingCreateView(LoginRequiredMixin, CreateView):
@@ -83,14 +106,14 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
     template_name = 'homestay/booking_form.html'
 
     def form_valid(self, form):
-        room = Room.objects.get(pk=self.kwargs['pk'])
-        if room.is_available:
+        room = get_object_or_404(Room, pk=self.kwargs['pk'])
+        if room.availability:
             form.instance.room = room
             form.instance.user = self.request.user
             return super().form_valid(form)
         else:
-            form.add_error(None, 'This room is not available.')
-            return self.form_invalid(form)
+            messages.error(self.request, 'This room is not available.')
+            return redirect('room_detail', pk=room.pk)
 
     def get_success_url(self):
         return reverse_lazy('booking_confirm')
@@ -123,7 +146,7 @@ class HomestayDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         homestay = self.get_object()
-        context['rooms'] = Room.objects.filter(homestay=homestay).order_by('room_number')
+        context['rooms'] = Room.objects.filter(homestay=homestay)
         context['reviews'] = Review.objects.filter(homestay=homestay).order_by('-created_at')
         return context
 
@@ -134,7 +157,7 @@ class AddReviewView(LoginRequiredMixin, CreateView):
     template_name = 'homestay/add_review.html'
 
     def form_valid(self, form):
-        homestay = Homestay.objects.get(pk=self.kwargs['pk'])
+        homestay = get_object_or_404(Homestay, pk=self.kwargs['pk'])
         form.instance.homestay = homestay
         form.instance.user = self.request.user
         messages.success(self.request, 'Your review has been posted successfully!')
@@ -142,3 +165,32 @@ class AddReviewView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('homestay_detail', kwargs={'pk': self.kwargs['pk']})
+
+# Homestay Create View (CBV)
+class HomestayCreateView(LoginRequiredMixin, CreateView):
+    model = Homestay
+    fields = ['name', 'location', 'description', 'price', 'image']
+    template_name = 'homestay/homestay_form.html'
+    success_url = reverse_lazy('homestays')  # After success, redirect to homestay list page
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user  # Assign the current user as the owner of the homestay
+        return super().form_valid(form)
+
+# Edit Room View
+@login_required
+def edit_profile(request):
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        return redirect('profile')  # atau halaman lain jika profil tidak ada
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  # redirect ke halaman profil setelah update
+    else:
+        form = UserProfileForm(instance=profile)
+
+    return render(request, 'edit_profile.html', {'form': form})
