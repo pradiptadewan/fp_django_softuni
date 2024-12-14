@@ -51,6 +51,11 @@
       {% endfor %}
     </div>
 
+    <!-- Add Room Button -->
+    <div class="text-center mt-4">
+      <a href="{% url 'create_room' homestay.pk %}" class="btn btn-success btn-lg">Add Room</a>
+    </div>
+
     <!-- Reviews Section -->
     <h2 class="my-4 text-center text-dark">Guest Reviews</h2>
     <div class="row">

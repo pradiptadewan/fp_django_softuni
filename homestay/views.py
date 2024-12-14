@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Booking, Room, Review, UserProfile
-from .form import BookingForm, RegisterForm, ReviewForm, UserProfileForm
+from .form import BookingForm, RegisterForm, ReviewForm, UserProfileForm, RoomForm
 from .models import Homestay
 from .form import HomestayForm
 
@@ -144,6 +144,25 @@ class UserBookingListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Booking.objects.filter(user=self.request.user)
 
+
+# Homestay Create View (CBV)
+class HomestayCreateView(LoginRequiredMixin, CreateView):
+    model = Homestay
+    form_class = HomestayForm
+    template_name = 'homestay/homestay_form.html'
+    success_url = reverse_lazy('homestays')  # Redirect ke daftar homestay setelah berhasil
+
+    def form_valid(self, form):
+        # Tetapkan pemilik homestay ke pengguna yang sedang login
+        form.instance.owner = self.request.user
+        response = super().form_valid(form)
+
+        # Menyimpan fasilitas yang dipilih (ManyToMany)
+        if 'facilities' in form.cleaned_data:
+            form.instance.facilities.set(form.cleaned_data['facilities'])
+
+        return response
+
 # Homestay List View
 class HomestayListView(ListView):
     model = Homestay
@@ -188,17 +207,6 @@ class AddReviewView(LoginRequiredMixin, CreateView):
         return reverse_lazy('homestay_detail', kwargs={'pk': self.kwargs['pk']})
 
 
-# Homestay Create View (CBV)
-class HomestayCreateView(LoginRequiredMixin, CreateView):
-    model = Homestay
-    form_class = HomestayForm
-    template_name = 'homestay/homestay_form.html'
-    success_url = reverse_lazy('homestays')
-
-    def form_valid(self, form):
-        # Menetapkan pemilik homestay ke pengguna yang sedang login
-        form.instance.owner = self.request.user
-        return super().form_valid(form)
 # Edit Room View
 @login_required
 def edit_profile(request):
@@ -254,3 +262,19 @@ def add_review(request, homestay_id):
         form = ReviewForm()
 
     return render(request, 'homestay/add_review.html', {'form': form, 'homestay': homestay})
+
+@login_required
+def create_room(request, homestay_id):
+    homestay = Homestay.objects.get(id=homestay_id)
+
+    if request.method == 'POST':
+        form = RoomForm(request.POST, request.FILES)
+        if form.is_valid():
+            room = form.save(commit=False)
+            room.homestay = homestay  # Set homestay yang sesuai
+            room.save()
+            return redirect('homestay_detail', pk=homestay.id)
+    else:
+        form = RoomForm()
+
+    return render(request, 'homestay/create_room.html', {'form': form, 'homestay': homestay})

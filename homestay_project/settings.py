@@ -20,7 +20,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'homestay',
+    'widget_tweaks',
+    'crispy_forms',
+    'crispy_bootstrap4',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Middleware yang digunakan oleh aplikasi
 MIDDLEWARE = [

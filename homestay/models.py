@@ -57,6 +57,7 @@ class Homestay(models.Model):
         return reverse('homestay_detail', args=[self.slug])
 
 
+
 # Model untuk Room
 class Room(models.Model):
     """

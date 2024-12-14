@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Booking, UserProfile, Room, Review, Homestay, Location, Facility
+from .models import Booking, UserProfile, Room, Review, Homestay, Facility
 
 
 # Form Registrasi Pengguna
@@ -25,6 +25,18 @@ class RegisterForm(UserCreationForm):
             user.save()
         return user
 
+# Form untuk Mengedit Profil Pengguna
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['phone_number', 'address']  # Daftar field yang ingin diupdate
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Ambil user dari parameter
+        super().__init__(*args, **kwargs)
+        if user:
+            self.instance.user = user  # Set user yang sedang login jika ada
+
 
 # Form Pemesanan Kamar
 class BookingForm(forms.ModelForm):
@@ -44,6 +56,7 @@ class BookingForm(forms.ModelForm):
             raise forms.ValidationError("Check-out date must be after the check-in date.")
 
         return cleaned_data
+
 # Form Review
 class ReviewForm(forms.ModelForm):
     class Meta:
@@ -57,17 +70,6 @@ class ReviewForm(forms.ModelForm):
             initial=homestay_id
         )
 
-# Form untuk Mengedit Profil Pengguna
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ['phone_number', 'address']  # Daftar field yang ingin diupdate
-
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Ambil user dari parameter
-        super().__init__(*args, **kwargs)
-        if user:
-            self.instance.user = user  # Set user yang sedang login jika ada
 
 # Form untuk Mengedit Room
 class RoomUpdateForm(forms.ModelForm):
@@ -77,19 +79,37 @@ class RoomUpdateForm(forms.ModelForm):
 
 # Membuat Homestay
 class HomestayForm(forms.ModelForm):
+    facilities = forms.ModelMultipleChoiceField(
+        queryset=Facility.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={
+            'class': 'form-check-input',  # Tambahkan class Bootstrap
+        }),
+        required=False
+    )
+
+
     class Meta:
         model = Homestay
-        fields = ['name', 'slug', 'description', 'address', 'phone', 'email', 'image', 'facilities', 'location',
-                  'price']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Menambahkan fasilitas yang tersedia di form
-        self.fields['facilities'].queryset = Facility.objects.all()
-        self.fields['location'].queryset = Location.objects.all()
+        fields = ['name', 'slug', 'description', 'address', 'phone', 'email', 'image', 'facilities', 'price']
 
     def clean_slug(self):
         slug = self.cleaned_data['slug']
         if Homestay.objects.filter(slug=slug).exists():
             raise forms.ValidationError("Slug already exists. Please choose a different one.")
         return slug
+
+    def clean_facilities(self):
+        facilities = self.cleaned_data.get('facilities')
+        if not facilities:
+            raise forms.ValidationError("Please select at least one facility.")
+        return facilities
+
+#Membuat Kamar
+class RoomForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = ['name', 'description', 'price', 'image', 'number_of_guests', 'availability']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['availability'].initial = True

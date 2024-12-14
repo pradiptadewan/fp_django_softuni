@@ -2,7 +2,8 @@ from django.urls import path
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.auth import views as auth_views  # Tambahkan ini
+from django.contrib.auth import views as auth_views
+from . import views
 from .views import (
     home, about, contact,
     RoomListView, RoomDetailView,
@@ -10,7 +11,7 @@ from .views import (
     UserBookingListView,
     HomestayListView, HomestayDetailView, HomestayCreateView,
     AddReviewView,
-    register, login_view, logout_view, profile, edit_profile  # Import edit_profile
+    register, login_view, logout_view, profile, edit_profile,
 )
 
 urlpatterns = [
@@ -22,6 +23,7 @@ urlpatterns = [
     # Rooms
     path('rooms/', login_required(RoomListView.as_view()), name='rooms'),  # Daftar kamar
     path('rooms/<int:pk>/', login_required(RoomDetailView.as_view()), name='room_detail'),  # Detail kamar
+    path('homestay/<int:homestay_id>/create_room/', views.create_room, name='create_room'), #Membuat Kamar
 
     # User Authentication
     path('register/', register, name='register'),  # Halaman registrasi
@@ -42,6 +44,7 @@ urlpatterns = [
     path('bookings/', login_required(UserBookingListView.as_view()), name='bookings'),  # Daftar booking pengguna (login diperlukan)
     path('room/<int:pk>/book/', BookingCreateView.as_view(), name='booking_create'),
     path('booking/<int:pk>/confirm/', booking_confirm, name='booking_confirm'),
+
     # Homestays
     path('homestays/', login_required(HomestayListView.as_view()), name='homestays'),  # Daftar homestay
     path('homestays/<int:pk>/', login_required(HomestayDetailView.as_view()), name='homestay_detail'),  # Detail homestay

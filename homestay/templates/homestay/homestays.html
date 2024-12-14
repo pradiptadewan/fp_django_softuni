@@ -1,34 +1,35 @@
 {% extends 'homestay/base.html' %}
 
-{% block content %}
-  <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="text-center">Our Homestays</h1>
-      <a href="{% url 'homestay_create' %}" class="btn btn-success">Create Your Homestays</a>
-    </div>
+{% block title %}Homestay List{% endblock %}
 
-    {% if homestays %}
-      <div class="row">
-        {% for homestay in homestays %}
-          <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-              <!-- Menampilkan gambar homestay yang di-upload -->
-              {% if homestay.image %}
-                <img src="{{ homestay.image.url }}" class="card-img-top" alt="{{ homestay.name }}">
-              {% else %}
-                <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="No image available">
-              {% endif %}
-              <div class="card-body">
-                <h5 class="card-title">{{ homestay.name }}</h5>
-                <p class="card-text">{{ homestay.description|truncatewords:20 }}</p>
-                <a href="{% url 'homestay_detail' pk=homestay.pk %}" class="btn btn-primary">View Details</a>
-              </div>
+{% block content %}
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-center">Our Homestays</h1>
+    <a href="{% url 'homestay_create' %}" class="btn btn-success">Create New Homestay</a>
+  </div>
+
+  {% if homestays %}
+    <div class="row">
+      {% for homestay in homestays %}
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm">
+            {% if homestay.image %}
+              <img src="{{ homestay.image.url }}" class="card-img-top" alt="{{ homestay.name }}">
+            {% else %}
+              <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="No image available">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ homestay.name }}</h5>
+              <p class="card-text">{{ homestay.description|truncatewords:20 }}</p>
+              <a href="{% url 'homestay_detail' pk=homestay.pk %}" class="btn btn-primary">View Details</a>
             </div>
           </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p class="text-center">No homestays available.</p>
-    {% endif %}
-  </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center">No homestays available. <a href="{% url 'homestay_create' %}">Create one</a>.</p>
+  {% endif %}
+</div>
 {% endblock %}
