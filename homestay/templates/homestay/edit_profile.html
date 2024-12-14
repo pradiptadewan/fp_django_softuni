@@ -6,6 +6,8 @@
 
     <form method="post">
       {% csrf_token %}
+
+      <!-- Form input untuk user data (first_name, last_name, email) -->
       <div class="form-group">
         <label for="id_first_name">First Name:</label>
         <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.first_name }}" required>
@@ -25,6 +27,17 @@
         <label for="id_password">New Password (optional):</label>
         <input type="password" class="form-control" id="id_password" name="password">
         <small class="form-text text-muted">Leave empty to keep the current password.</small>
+      </div>
+
+      <!-- Form untuk phone_number dan address -->
+      <div class="form-group">
+        <label for="id_phone_number">Phone Number:</label>
+        {{ form.phone_number }}  <!-- Gunakan form field yang ada di UserProfileForm -->
+      </div>
+
+      <div class="form-group">
+        <label for="id_address">Address:</label>
+        {{ form.address }}  <!-- Gunakan form field yang ada di UserProfileForm -->
       </div>
 
       <button type="submit" class="btn btn-primary">Update Profile</button>

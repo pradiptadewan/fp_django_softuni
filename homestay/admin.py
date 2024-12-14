@@ -35,9 +35,10 @@ class HomestayAdmin(admin.ModelAdmin):
 
 # Menambahkan Booking Model ke Admin
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('user', 'room', 'check_in', 'check_out', 'status')  # Menampilkan kolom-kolom yang diinginkan
-    list_filter = ('status', 'check_in')  # Filter berdasarkan status atau tanggal check-in
-    search_fields = ('user__username', 'room__name')  # Pencarian berdasarkan username user atau nama kamar
+    list_display = ['user', 'room', 'check_in', 'check_out', 'status']  # Sesuaikan dengan field yang ada
+    list_filter = ['check_in', 'check_out']  # Sesuaikan dengan field yang ada
+    ordering = ['check_in']  # Sesuaikan dengan field yang ada
+    date_hierarchy = 'check_in'  # Sesuaikan dengan field yang ada
 
     # Menentukan hak akses berdasarkan role pengguna
     def get_queryset(self, request):

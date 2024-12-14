@@ -1,15 +1,34 @@
 {% extends 'homestay/base.html' %}
 
-
 {% block content %}
-  <h1>Our Homestays</h1>
-  <ul>
-    {% for homestay in homestays %}
-      <li>
-        <a href="{% url 'homestay_detail' pk=homestay.pk %}">{{ homestay.name }}</a>
-      </li>
-    {% empty %}
-      <p>No homestays available.</p>
-    {% endfor %}
-  </ul>
+  <div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="text-center">Our Homestays</h1>
+      <a href="{% url 'homestay_create' %}" class="btn btn-success">Create Your Homestays</a>
+    </div>
+
+    {% if homestays %}
+      <div class="row">
+        {% for homestay in homestays %}
+          <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+              <!-- Menampilkan gambar homestay yang di-upload -->
+              {% if homestay.image %}
+                <img src="{{ homestay.image.url }}" class="card-img-top" alt="{{ homestay.name }}">
+              {% else %}
+                <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="No image available">
+              {% endif %}
+              <div class="card-body">
+                <h5 class="card-title">{{ homestay.name }}</h5>
+                <p class="card-text">{{ homestay.description|truncatewords:20 }}</p>
+                <a href="{% url 'homestay_detail' pk=homestay.pk %}" class="btn btn-primary">View Details</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center">No homestays available.</p>
+    {% endif %}
+  </div>
 {% endblock %}

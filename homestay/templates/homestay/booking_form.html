@@ -1,13 +1,68 @@
 {% extends 'homestay/base.html' %}
+
 {% block title %}Homestay - Booking{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h1 class="mt-4">Book {{ room.name }}</h1>
-  <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Book Now</button>
-  </form>
+<div class="container mt-5">
+    <!-- Header Section -->
+    <h1 class="display-4 text-center text-success mb-4">Book Your Stay</h1>
+    <p class="lead text-center mb-5">Make your stay luxurious and unforgettable with our top-class rooms.</p>
+
+    <!-- Booking Form Section -->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form method="POST" class="border p-4 shadow-lg rounded bg-light" style="background: linear-gradient(135deg, #f0f8ff, #e6e6fa);">
+                {% csrf_token %}
+
+                <!-- Booking Form Fields -->
+                <div class="form-group mb-4">
+                    {{ form.as_p }}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success btn-lg mt-3 px-5 shadow-lg" style="transition: transform 0.3s ease;">
+                        Book Now
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Promotional Section -->
+    <div class="row mt-5">
+        <div class="col text-center">
+            <h3 class="font-weight-bold text-danger">Exclusive Deals for You!</h3>
+            <p class="lead">Take advantage of our special offers and book now to experience the luxury!</p>
+        </div>
+    </div>
 </div>
+
+<!-- Additional Styling -->
+<style>
+    .btn:hover {
+        transform: scale(1.1); /* Scale button size on hover */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.3); /* Green focus effect */
+    }
+
+    .shadow-lg {
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .bg-light {
+        background-color: #f9f9f9 !important;
+    }
+</style>
 {% endblock %}

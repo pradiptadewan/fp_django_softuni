@@ -20,12 +20,40 @@
         <td>{{ booking.check_in|date:"M d, Y" }}</td>
         <td>{{ booking.check_out|date:"M d, Y" }}</td>
         <td>
-          <a href="{% url 'booking_detail' booking.id %}" class="btn btn-info btn-sm">View</a>
-          <a href="{% url 'booking_delete' booking.id %}" class="btn btn-danger btn-sm">Cancel</a>
+          <!-- Action buttons, you can add more actions here -->
+          <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#bookingDetailModal{{ booking.id }}">View</a>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+
+  <!-- Modal for Booking Details -->
+  {% for booking in bookings %}
+  <div class="modal fade" id="bookingDetailModal{{ booking.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Booking Detail: {{ booking.room.name }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Room:</strong> {{ booking.room.name }}</p>
+          <p><strong>Check In:</strong> {{ booking.check_in|date:"M d, Y" }}</p>
+          <p><strong>Check Out:</strong> {{ booking.check_out|date:"M d, Y" }}</p>
+          <p><strong>Status:</strong> {{ booking.status }}</p>
+          <p><strong>Booking Date:</strong> {{ booking.created_at|date:"M d, Y" }}</p>
+          <!-- Tambahkan informasi lainnya sesuai kebutuhan -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
 </div>
 {% endblock %}

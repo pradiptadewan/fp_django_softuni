@@ -1,27 +1,77 @@
 {% extends 'homestay/base.html' %}
 
-
 {% block content %}
-  <h1>{{ homestay.name }}</h1>
-  <p>{{ homestay.description }}</p>
-  <p>Location: {{ homestay.location }}</p>
-  <p>Price per night: {{ homestay.price }}</p>
+  <div class="container mt-5">
+    <!-- Homestay Details -->
+    <div class="row mb-5">
+      <div class="col-lg-6">
+        <img src="{{ homestay.image.url }}" alt="{{ homestay.name }}" class="img-fluid rounded shadow-lg">
+      </div>
+      <div class="col-lg-6">
+        <h1 class="display-4 text-dark">{{ homestay.name }}</h1>
+        <p class="lead text-muted">{{ homestay.description }}</p>
+        <p><strong>Location:</strong> <span class="text-primary">{{ homestay.location }}</span></p>
 
-  <h2>Rooms</h2>
-  <ul>
-    {% for room in rooms %}
-      <li>{{ room.name }} - {{ room.price }}</li>
-    {% endfor %}
-  </ul>
+        <!-- Facilities Section -->
+        <h3 class="mt-4 text-dark">Facilities</h3>
+        <div class="row">
+          {% for facility in facilities %}
+            <div class="col-md-4 mb-3">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-2x fa-{{ facility.icon }} text-primary mr-3"></i>  <!-- Gantilah dengan nama ikon yang sesuai -->
+                <div>
+                  <strong>{{ facility.name }}</strong>
+                  {% if facility.description %}
+                    <p class="text-muted">{{ facility.description }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p>No facilities available for this homestay.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
 
-  <h2>Reviews</h2>
-  <ul>
-    {% for review in reviews %}
-      <li>{{ review.user.username }}: {{ review.content }}</li>
-    {% empty %}
-      <p>No reviews yet.</p>
-    {% endfor %}
-  </ul>
+    <!-- Rooms Section -->
+    <h2 class="my-4 text-center text-dark">Our Rooms</h2>
+    <div class="row">
+      {% for room in rooms %}
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm border-0 rounded">
+            <img src="{{ room.image.url }}" alt="{{ room.name }}" class="card-img-top rounded-top">
+            <div class="card-body">
+              <h5 class="card-title">{{ room.name }}</h5>
+              <p class="card-text">Rp{{ room.price|floatformat:0 }} per night</p>
+              <a href="{% url 'room_detail' pk=room.pk %}" class="btn btn-primary btn-block">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
 
-  <a href="{% url 'add_review' pk=homestay.pk %}">Add Review</a>
+    <!-- Reviews Section -->
+    <h2 class="my-4 text-center text-dark">Guest Reviews</h2>
+    <div class="row">
+      {% for review in reviews %}
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm border-0 rounded">
+            <div class="card-body">
+              <h5 class="card-title text-primary">{{ review.user.username }}</h5>
+              <p class="card-text">{{ review.comment }}</p>
+              <p><strong>Rating:</strong> {{ review.rating }}</p>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center text-muted">No reviews yet.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Add Review Section -->
+    <div class="text-center mt-4">
+      <a href="{% url 'add_review' pk=homestay.pk %}" class="btn btn-success btn-lg">Add Your Review</a>
+    </div>
+  </div>
 {% endblock %}

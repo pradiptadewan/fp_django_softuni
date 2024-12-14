@@ -102,7 +102,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Pengaturan untuk file media (misalnya gambar yang diupload)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Pengaturan untuk ID otomatis pada model
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -110,3 +111,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Pengaturan login
 LOGIN_URL = 'login'  # Mengarahkan pengguna ke halaman login
 LOGIN_REDIRECT_URL = 'profile'  # Setelah login, pengguna diarahkan ke halaman profile
+
