@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Booking, Room, Review, UserProfile
 from .form import BookingForm, RegisterForm, ReviewForm, UserProfileForm, RoomForm
-from .models import Homestay
+from .models import Homestay, ContactMessage
 from .form import HomestayForm
 
 # Home Page
@@ -25,11 +25,14 @@ class RoomListView(ListView):
     template_name = 'homestay/rooms.html'
     context_object_name = 'rooms'
 
+
 # Room Detail View (CBV)
 class RoomDetailView(DetailView):
     model = Room
     template_name = 'homestay/room_detail.html'
     context_object_name = 'room'
+
+
 
 # Contact Page
 def contact(request):
@@ -38,9 +41,8 @@ def contact(request):
         email = request.POST.get("email")
         message = request.POST.get("message")
 
-        # Simpan atau proses data sesuai kebutuhan
-        # Contoh: Simpan ke database atau kirim email
-        print(f"Pesan dari {name} ({email}): {message}")  # Debug, bisa diganti
+        # Simpan data ke database
+        ContactMessage.objects.create(name=name, email=email, message=message)
 
         # Tampilkan pesan sukses
         messages.success(request, "Thank you for reaching out! We will get back to you shortly.")
@@ -169,6 +171,10 @@ class HomestayListView(ListView):
     template_name = 'homestay/homestays.html'
     context_object_name = 'homestays'
 
+    def get_queryset(self):
+        # Hanya menampilkan homestay yang sudah disetujui
+        return Homestay.objects.filter(approved=True)
+
 # Homestay Detail View
 class HomestayDetailView(DetailView):
     model = Homestay
@@ -178,9 +184,14 @@ class HomestayDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         homestay = self.get_object()
-        context['rooms'] = Room.objects.filter(homestay=homestay)
+
+        # Hanya menampilkan rooms yang sudah disetujui
+        context['rooms'] = Room.objects.filter(homestay=homestay, approved=True)
+
+        # Menambahkan review dan fasilitas terkait homestay
         context['reviews'] = Review.objects.filter(homestay=homestay).order_by('-created_at')
-        context['facilities'] = self.object.facilities.all()
+        context['facilities'] = homestay.facilities.all()
+
         return context
 
 
@@ -206,8 +217,6 @@ class AddReviewView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy('homestay_detail', kwargs={'pk': self.kwargs['pk']})
 
-
-# Edit Room View
 @login_required
 def edit_profile(request):
     user = request.user
@@ -271,7 +280,7 @@ def create_room(request, homestay_id):
         form = RoomForm(request.POST, request.FILES)
         if form.is_valid():
             room = form.save(commit=False)
-            room.homestay = homestay  # Set homestay yang sesuai
+            room.homestay = homestay
             room.save()
             return redirect('homestay_detail', pk=homestay.id)
     else:

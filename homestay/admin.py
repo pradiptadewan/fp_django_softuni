@@ -1,11 +1,19 @@
 from django.contrib import admin
-from .models import Room, Homestay, Booking, Review, UserProfile, Facility, Location
+from .models import Room, Homestay, Booking, Review, UserProfile, Facility, Location, ContactMessage
 
 # Menambahkan Room Model ke Admin
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('name', 'homestay', 'price', 'availability')  # Menampilkan kolom-kolom yang diinginkan
-    list_filter = ('availability', 'homestay')  # Filter berdasarkan ketersediaan atau homestay
+    list_display = ('name', 'homestay', 'price', 'availability', 'approved')  # Menampilkan kolom-kolom yang diinginkan
+    list_filter = ('availability', 'homestay', 'approved')  # Filter berdasarkan ketersediaan atau homestay
     search_fields = ('name', 'homestay__name')  # Pencarian berdasarkan nama kamar atau homestay
+
+    actions = ['approve_selected']
+
+    def approve_selected(self, request, queryset):
+        # Menandai homestay yang dipilih sebagai disetujui
+        queryset.update(approved=True)
+
+    approve_selected.short_description = "Setujui homestay yang dipilih"
 
     # Menentukan hak akses berdasarkan role pengguna
     def get_queryset(self, request):
@@ -19,9 +27,18 @@ class RoomAdmin(admin.ModelAdmin):
 
 # Menambahkan Homestay Model ke Admin
 class HomestayAdmin(admin.ModelAdmin):
-    list_display = ('name', 'address', 'description', 'created_at')  # Menampilkan kolom-kolom yang diinginkan
+    list_display = ('name', 'address', 'description', 'created_at', 'approved')  # Menampilkan kolom-kolom yang diinginkan
     search_fields = ('name', 'address')  # Pencarian berdasarkan nama atau alamat
     filter_horizontal = ('facilities',)  # Menambahkan antarmuka untuk memilih fasilitas dalam Homestay
+    list_filter = ('approved',)
+
+    actions = ['approve_selected']
+
+    def approve_selected(self, request, queryset):
+        # Menandai homestay yang dipilih sebagai disetujui
+        queryset.update(approved=True)
+
+    approve_selected.short_description = "Setujui homestay yang dipilih"
 
     # Menentukan hak akses berdasarkan role pengguna
     def get_queryset(self, request):
@@ -110,6 +127,14 @@ class LocationAdmin(admin.ModelAdmin):
             return queryset  # Staff dapat melihat semua lokasi
         else:
             return queryset.none()  # Pengguna biasa tidak dapat melihat data
+
+#KONTAk
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('name', 'email')
 
 # Mendaftarkan model ke admin site
 admin.site.register(Room, RoomAdmin)
