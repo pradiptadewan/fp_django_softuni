@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,6 +10,8 @@ from .models import Booking, Room, Review, UserProfile
 from .form import BookingForm, RegisterForm, ReviewForm, UserProfileForm, RoomForm
 from .models import Homestay, ContactMessage
 from .form import HomestayForm
+from django.http import JsonResponse
+from django.utils import timezone
 
 # Home Page
 def home(request):
@@ -31,7 +33,6 @@ class RoomDetailView(DetailView):
     model = Room
     template_name = 'homestay/room_detail.html'
     context_object_name = 'room'
-
 
 
 # Contact Page
@@ -79,14 +80,22 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+
+                # Memeriksa apakah "Remember Me" dicentang
+                if request.POST.get('remember'):  # Jika ada data 'remember' dalam form
+                    request.session.set_expiry(1209600)  # Session akan bertahan selama 2 minggu (1209600 detik)
+                else:
+                    request.session.set_expiry(0)  # Session akan berakhir setelah browser ditutup
+
                 messages.success(request, 'You have successfully logged in!')
-                return redirect('home')
+                return redirect('home')  # Ganti dengan halaman tujuan setelah login
             else:
                 messages.error(request, 'Invalid username or password')
         else:
             messages.error(request, 'Invalid username or password')
     else:
         form = AuthenticationForm()
+
     return render(request, 'homestay/login.html', {'form': form})
 
 # Logout User
@@ -115,27 +124,78 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
     template_name = 'homestay/booking_form.html'
 
     def form_valid(self, form):
-        # Tetapkan pengguna yang sedang login
         form.instance.user = self.request.user
-
-        # Ambil data kamar berdasarkan primary key (pk)
-        room = get_object_or_404(Room, pk=self.kwargs['pk'])
-        form.instance.room = room
-
-        # Hitung total harga berdasarkan lama tinggal
-        days_stay = (form.cleaned_data['check_out'] - form.cleaned_data['check_in']).days
-        form.instance.total_price = room.price * days_stay
-
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('booking_confirm', kwargs={'pk': self.object.pk})
+        # Setelah booking berhasil, alihkan ke halaman pembayaran dengan ID booking
+        return reverse_lazy('payment', kwargs={'booking_id': self.object.id})
 
-# Booking Confirmation
+def get_rooms_by_homestay(request, homestay_id):
+    rooms = Room.objects.filter(homestay_id=homestay_id)
+    room_list = [{'id': room.id, 'name': room.name} for room in rooms]
+    return JsonResponse({'rooms': room_list})
+
+def get_room_image(request, room_id):
+    try:
+        room = Room.objects.get(id=room_id)
+        image_url = room.image.url if room.image else None
+        return JsonResponse({'image_url': image_url})
+    except Room.DoesNotExist:
+        return JsonResponse({'image_url': None})
+
 def booking_confirm(request, pk):
     booking = get_object_or_404(Booking, pk=pk)
     return render(request, 'homestay/booking_confirm.html', {'booking': booking})
 
+#PAYMENT
+class PaymentView(TemplateView):
+    template_name = 'homestay/payment.html'
+
+    def get_context_data(self, **kwargs):
+        # Ambil data booking berdasarkan ID yang diteruskan di URL
+        booking_id = self.kwargs['booking_id']
+        booking = Booking.objects.get(id=booking_id)
+
+        # Menyediakan data booking untuk template
+        context = super().get_context_data(**kwargs)
+        context['booking'] = booking
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # Ambil ID booking dari URL
+        booking_id = self.kwargs['booking_id']
+        booking = Booking.objects.get(id=booking_id)
+
+        # Misalnya, kita lakukan pembayaran dan ubah status pemesanan
+        booking.status = 'Paid'  # Ubah status booking
+        booking.save()
+
+        # Tambahkan pesan sukses
+        messages.success(request, 'Payment successful! Your booking is now confirmed.')
+
+        # Redirect ke halaman konfirmasi setelah pembayaran
+        return redirect('booking_confirm', pk=booking.id)
+
+#CANCEL
+def cancel_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    # Pastikan hanya pengguna yang membuat pemesanan yang dapat membatalkannya
+    if booking.user != request.user:
+        messages.error(request, 'You cannot cancel this booking.')
+        return redirect('bookings')  # Halaman My Bookings
+
+    # Pastikan pemesanan belum lewat check-in date
+    if booking.check_in < timezone.now().date():
+        messages.error(request, 'You cannot cancel a booking after the check-in date.')
+        return redirect('bookings')  # Halaman My Bookings
+
+    # Hapus pemesanan dari database
+    booking.delete()
+
+    messages.success(request, 'Your booking has been successfully cancelled.')
+    return redirect('bookings')  # Halaman My Bookings
 
 # User Bookings List View
 class UserBookingListView(LoginRequiredMixin, ListView):

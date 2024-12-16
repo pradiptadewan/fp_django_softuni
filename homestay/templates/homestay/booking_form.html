@@ -1,68 +1,108 @@
 {% extends 'homestay/base.html' %}
 
-{% block title %}Homestay - Booking{% endblock %}
+{% block title %}Booking Form{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <!-- Header Section -->
-    <h1 class="display-4 text-center text-success mb-4">Book Your Stay</h1>
-    <p class="lead text-center mb-5">Make your stay luxurious and unforgettable with our top-class rooms.</p>
-
-    <!-- Booking Form Section -->
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <form method="POST" class="border p-4 shadow-lg rounded bg-light" style="background: linear-gradient(135deg, #f0f8ff, #e6e6fa);">
-                {% csrf_token %}
-
-                <!-- Booking Form Fields -->
-                <div class="form-group mb-4">
-                    {{ form.as_p }}
+            <div class="card shadow-lg p-4 rounded">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2 class="font-weight-bold">Book Your Stay</h2>
                 </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
 
-                <!-- Submit Button -->
-                <div class="text-center">
-                    <button type="submit" class="btn btn-success btn-lg mt-3 px-5 shadow-lg" style="transition: transform 0.3s ease;">
-                        Book Now
-                    </button>
+                        <div class="form-group">
+                            <label for="id_homestay" class="font-weight-bold">Homestay</label>
+                            {{ form.homestay }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_room" class="font-weight-bold">Room</label>
+                            {{ form.room }}
+                        </div>
+
+                        <!-- Tempat untuk menampilkan gambar kamar -->
+                        <div class="form-group" id="room-image-container">
+                            <label class="font-weight-bold">Room Image :</label>
+                            <img id="room-image" src="" alt="Selected Room Image" class="img-fluid shadow-lg" style="display:none; width: 200px; height: auto;"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_check_in" class="font-weight-bold">Check-in Date</label>
+                            {{ form.check_in }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_check_out" class="font-weight-bold">Check-out Date</label>
+                            {{ form.check_out }}
+                        </div>
+
+                        <button type="submit" class="btn btn-warning btn-lg w-100 mt-3">Next: Payment</button>
+                    </form>
                 </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Promotional Section -->
-    <div class="row mt-5">
-        <div class="col text-center">
-            <h3 class="font-weight-bold text-danger">Exclusive Deals for You!</h3>
-            <p class="lead">Take advantage of our special offers and book now to experience the luxury!</p>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Additional Styling -->
-<style>
-    .btn:hover {
-        transform: scale(1.1); /* Scale button size on hover */
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
-    }
+<script>
+    // Update rooms based on selected homestay
+    const homestayField = document.getElementById('id_homestay');
+    const roomField = document.getElementById('id_room');
+    const roomImageContainer = document.getElementById('room-image-container');
+    const roomImage = document.getElementById('room-image');
 
-    .form-group input, .form-group select, .form-group textarea {
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        padding: 10px;
-        transition: border-color 0.3s ease;
-    }
+    homestayField.addEventListener('change', function() {
+        const homestayId = homestayField.value;
+        fetch(`/get_rooms_by_homestay/${homestayId}/`)
+            .then(response => response.json())
+            .then(data => {
+                roomField.innerHTML = '';
+                data.rooms.forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room.id;
+                    option.textContent = room.name;
+                    roomField.appendChild(option);
+                });
+            });
+    });
 
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-        border-color: #28a745;
-        box-shadow: 0 0 8px rgba(40, 167, 69, 0.3); /* Green focus effect */
-    }
+    // Update the room image when a room is selected
+    roomField.addEventListener('change', function() {
+        const roomId = roomField.value;
+        fetch(`/get_room_image/${roomId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.image_url) {
+                    roomImage.src = data.image_url;
+                    roomImage.style.display = 'block';
+                } else {
+                    roomImage.style.display = 'none';
+                }
+            });
+    });
 
-    .shadow-lg {
-        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
-    }
+    // Initialize Flatpickr for date fields
+    document.addEventListener("DOMContentLoaded", function() {
+        flatpickr("#id_check_in", {
+            dateFormat: "Y-m-d",
+            minDate: "today", // Prevent selecting dates in the past
+        });
+        flatpickr("#id_check_out", {
+            dateFormat: "Y-m-d",
+            minDate: "today", // Prevent selecting dates in the past
+        });
+    });
+</script>
 
-    .bg-light {
-        background-color: #f9f9f9 !important;
-    }
-</style>
+<!-- Tambahkan Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<!-- Tambahkan Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 {% endblock %}

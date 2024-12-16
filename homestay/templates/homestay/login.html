@@ -37,6 +37,11 @@
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
 
+                            <!-- Checkbox to toggle password visibility -->
+                            <div class="form-group">
+                                <button type="button" class="btn btn-secondary" id="toggle-password">Show Password</button>
+                            </div>
+
                             <!-- Remember Me Checkbox -->
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="remember" name="remember">
@@ -54,4 +59,16 @@
             </div>
         </div>
     </div>
+
+    <!-- JavaScript to toggle password visibility -->
+    <script>
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            var passwordField = document.getElementById('password');
+            var isPasswordVisible = passwordField.type === 'text';
+
+            passwordField.type = isPasswordVisible ? 'password' : 'text';
+
+            this.textContent = isPasswordVisible ? 'Show Password' : 'Hide Password';
+        });
+    </script>
 {% endblock %}

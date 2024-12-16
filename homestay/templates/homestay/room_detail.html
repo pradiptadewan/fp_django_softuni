@@ -5,39 +5,57 @@
 
 {% block content %}
     <div class="container my-5">
-        <h1 class="display-4 text-center mb-4" style="font-family: 'Poppins', sans-serif; color: #2c3e50;">Detail Kamar</h1>
+        <!-- Judul Halaman -->
+        <h1 class="display-4 text-center mb-5" style="font-family: 'Poppins', sans-serif; color: #2c3e50; font-weight: bold; letter-spacing: 1px;">
+            Room Details
+        </h1>
+
+        <!-- Desain Kartu Kamar -->
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card shadow-lg rounded-lg border-0">
+                <div class="card shadow-lg rounded-4 border-0">
                     <!-- Gambar Kamar -->
                     <img src="{% if room.image %}{{ room.image.url }}{% else %}{% static 'homestay/images/A.jpeg' %}{% endif %}"
                          class="card-img-top"
                          alt="{{ room.name|default:'Gambar Kamar' }}"
-                         style="object-fit: cover; height: 400px; border-radius: 10px;">
+                         style="object-fit: cover; height: 500px; border-radius: 15px; transition: transform 0.3s ease-in-out; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
 
-                    <div class="card-body">
-                        <h3 class="card-title text-center" style="font-family: 'Poppins', sans-serif; color: #2c3e50;">{{ room.name }}</h3>
-                        <p class="text-muted text-center mb-4" style="font-family: 'Lora', serif;">{{ room.description|default:"Deskripsi tidak tersedia." }}</p>
+                    <!-- Isi Kartu -->
+                    <div class="card-body p-5">
+                        <!-- Nama Kamar -->
+                        <h3 class="card-title text-center" style="font-family: 'Poppins', sans-serif; color: #2c3e50; font-size: 32px; font-weight: bold;">
+                            {{ room.name }}
+                        </h3>
+                        <!-- Deskripsi Kamar -->
+                        <p class="text-muted text-center mb-4" style="font-family: 'Lora', serif; font-size: 18px; line-height: 1.7; color: #7f8c8d;">
+                            {{ room.description|default:"Deskripsi tidak tersedia." }}
+                        </p>
 
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <strong>Harga:</strong> Rp{{ room.price|default:"0" }}
+                        <!-- Fasilitas dan Harga -->
+                        <ul class="list-group list-group-flush mb-4" style="font-family: 'Lora', serif; font-size: 18px;">
+                            <li class="list-group-item" style="border-top: 1px solid #f1f1f1;">
+                                <strong>Harga:</strong> <span class="text-dark">Rp{{ room.price|default:"0" }}</span>
                             </li>
-                            <li class="list-group-item">
+                            <li class="list-group-item" style="border-top: 1px solid #f1f1f1;">
                                 <strong>Ketersediaan:</strong>
                                 {% if room.availability %}
-                                    <span class="text-success">Tersedia</span>
+                                    <span class="text-success font-weight-bold">Tersedia</span>
                                 {% else %}
-                                    <span class="text-danger">Tidak Tersedia</span>
+                                    <span class="text-danger font-weight-bold">Tidak Tersedia</span>
                                 {% endif %}
                             </li>
                         </ul>
 
+                        <!-- Tombol Pemesanan -->
                         <div class="text-center mt-4">
                             {% if room.availability %}
-                                <a href="{% url 'booking_form' room.pk %}" class="btn btn-primary btn-lg">Pesan Kamar</a>
+                                <a href="{% url 'booking_form' room.pk %}" class="btn btn-lg btn-danger" style="font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 30px; padding: 14px 40px; background-color: #e74c3c; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: all 0.3s ease-in-out;">
+                                    Book a Room
+                                </a>
                             {% else %}
-                                <button class="btn btn-secondary btn-lg" disabled>Tidak Tersedia</button>
+                                <button class="btn btn-lg btn-secondary" disabled style="font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 30px; padding: 14px 40px;">
+                                    Tidak Tersedia
+                                </button>
                             {% endif %}
                         </div>
                     </div>

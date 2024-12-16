@@ -52,10 +52,10 @@ class HomestayAdmin(admin.ModelAdmin):
 
 # Menambahkan Booking Model ke Admin
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ['user', 'room', 'check_in', 'check_out', 'status']  # Sesuaikan dengan field yang ada
-    list_filter = ['check_in', 'check_out']  # Sesuaikan dengan field yang ada
-    ordering = ['check_in']  # Sesuaikan dengan field yang ada
-    date_hierarchy = 'check_in'  # Sesuaikan dengan field yang ada
+    list_display = ['user', 'homestay', 'room', 'check_in', 'check_out']
+    list_filter = ['homestay', 'check_in', 'check_out']
+    ordering = ['check_in']
+    date_hierarchy = 'check_in'
 
     # Menentukan hak akses berdasarkan role pengguna
     def get_queryset(self, request):

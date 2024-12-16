@@ -37,12 +37,26 @@ class UserProfileForm(forms.ModelForm):
         if user:
             self.instance.user = user  # Set user yang sedang login jika ada
 
-
-# Form Pemesanan Kamar
+#FORM PEMESANAN KAMAR
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
-        fields = ['room', 'check_in', 'check_out', 'status']  # Hapus 'user'
+        fields = ['homestay', 'room', 'check_in', 'check_out']
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['room'].queryset = Room.objects.none()
+
+        # Update room choices based on selected homestay
+        if 'homestay' in self.data:
+            try:
+                homestay_id = int(self.data.get('homestay'))
+                self.fields['room'].queryset = Room.objects.filter(homestay_id=homestay_id)
+            except (ValueError, TypeError):
+                pass  # Invalid input, room queryset remains empty
+        elif self.instance.pk:
+            self.fields['room'].queryset = self.instance.homestay.room_set.all()
 
     def clean(self):
         cleaned_data = super().clean()
@@ -56,6 +70,7 @@ class BookingForm(forms.ModelForm):
             raise forms.ValidationError("Check-out date must be after the check-in date.")
 
         return cleaned_data
+
 
 # Form Review
 class ReviewForm(forms.ModelForm):

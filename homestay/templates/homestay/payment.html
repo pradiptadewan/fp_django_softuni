@@ -1,0 +1,61 @@
+{% extends 'homestay/base.html' %}
+
+{% block title %}Payment{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg p-5 rounded">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2 class="font-weight-bold">Payment Information</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Menampilkan pesan selamat datang dan detail pemesanan -->
+                    <div class="mb-4">
+                        <h5 class="font-weight-bold">Hallo, {{ request.user.username }}!</h5>
+                        <p>Proceed with the payment for your booking (ID: <strong>{{ booking.id }}</strong>)</p>
+                    </div>
+
+                    <!-- Detail pemesanan menggunakan tabel -->
+                    <div class="mb-4">
+                        <h4 class="font-weight-bold mb-3">Booking Details</h4>
+                        <table class="table table-striped table-bordered">
+                            <tbody>
+                                <tr class="bg-light">
+                                    <td><i class="bi bi-house-door"></i> <strong>Homestay:</strong></td>
+                                    <td>{{ booking.homestay.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-door-open"></i> <strong>Room:</strong></td>
+                                    <td>{{ booking.room.name }}</td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td><i class="bi bi-calendar-event"></i> <strong>Check-in Date:</strong></td>
+                                    <td>{{ booking.check_in }}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-calendar-x"></i> <strong>Check-out Date:</strong></td>
+                                    <td>{{ booking.check_out }}</td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td><i class="bi bi-currency-dollar"></i> <strong>Total Price:</strong></td>
+                                    <td>Rp{{ booking.room.price }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Form pembayaran -->
+                    <form method="POST" class="mt-4">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning btn-lg w-100">Pay Now</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

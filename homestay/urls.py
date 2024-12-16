@@ -11,7 +11,7 @@ from .views import (
     UserBookingListView,
     HomestayListView, HomestayDetailView, HomestayCreateView,
     AddReviewView,
-    register, login_view, logout_view, profile, edit_profile,
+    register, login_view, logout_view, profile, edit_profile, get_rooms_by_homestay
 )
 
 urlpatterns = [
@@ -24,6 +24,7 @@ urlpatterns = [
     path('rooms/', login_required(RoomListView.as_view()), name='rooms'),  # Daftar kamar
     path('rooms/<int:pk>/', login_required(RoomDetailView.as_view()), name='room_detail'),  # Detail kamar
     path('homestay/<int:homestay_id>/create_room/', views.create_room, name='create_room'), #Membuat Kamar
+    path('get_room_image/<int:room_id>/', views.get_room_image, name='get_room_image'),
 
     # User Authentication
     path('register/', register, name='register'),  # Halaman registrasi
@@ -44,6 +45,13 @@ urlpatterns = [
     path('bookings/', login_required(UserBookingListView.as_view()), name='bookings'),  # Daftar booking pengguna (login diperlukan)
     path('room/<int:pk>/book/', BookingCreateView.as_view(), name='booking_create'),
     path('booking/<int:pk>/confirm/', booking_confirm, name='booking_confirm'),
+    path('get_rooms_by_homestay/<int:homestay_id>/', get_rooms_by_homestay, name='get_rooms_by_homestay'),
+
+    #PAYMENT
+    path('payment/<int:booking_id>/', views.PaymentView.as_view(), name='payment'),
+
+    #CANCEL
+    path('cancel_booking/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
 
     # Homestays
     path('homestays/', login_required(HomestayListView.as_view()), name='homestays'),  # Daftar homestay

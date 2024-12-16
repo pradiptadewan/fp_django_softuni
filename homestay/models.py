@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.urls import reverse
 from django.utils.text import slugify
+from datetime import timedelta
 
 
 # Model untuk Facility
@@ -96,14 +97,18 @@ class Room(models.Model):
 # Model untuk Booking
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     check_in = models.DateField()
     check_out = models.DateField()
-    status = models.CharField(max_length=10, choices=[
-        ('PENDING', 'Pending'),
-        ('CONFIRMED', 'Confirmed'),
-        ('CANCELLED', 'Cancelled'),
-    ], default='PENDING')
+    status = models.CharField(max_length=20, choices=[('Booked', 'Booked'), ('Cancelled', 'Cancelled')],
+                              default='Booked')
+
+    @property
+    def total_price(self):
+        duration = (self.check_out - self.check_in).days
+        room_price = self.room.price
+        return room_price * duration
 
     def __str__(self):
         return f"Booking by {self.user.username} for {self.room.name}"

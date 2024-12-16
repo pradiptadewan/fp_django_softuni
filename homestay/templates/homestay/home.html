@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,35 +13,45 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f4f7f6;
             margin: 0;
             padding: 0;
         }
+
         header {
-            background-color: #343a40;
+            background-color: #1a1a1d;
             padding: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         header h1 {
             color: #fff;
             text-align: center;
-            font-size: 3rem;
-            letter-spacing: 2px;
+            font-size: 3.5rem;
+            letter-spacing: 3px;
+            font-weight: 700;
         }
+
         nav .nav-item {
-            margin: 0 15px;
+            margin: 0 20px;
         }
+
         nav .nav-link {
             color: #fff !important;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
             transition: all 0.3s ease-in-out;
+            font-size: 1.1rem;
         }
+
         nav .nav-link:hover {
             color: #ff6f61 !important;
             text-decoration: underline;
         }
+
         .hero {
             position: relative;
-            height: 70vh;
+            height: 80vh;
             background: url("{% static 'homestay/images/ASD.jpeg' %}") center center no-repeat;
             background-size: cover;
             color: #fff;
@@ -48,15 +59,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 50px 20px;
+            background-attachment: fixed;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
         }
+
         .hero .hero-text {
-            max-width: 80%;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+            max-width: 70%;
         }
+
         .hero h2 {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: 600;
         }
+
         .btn-primary {
             background-color: #ff6f61;
             border-color: #ff6f61;
@@ -64,29 +80,86 @@
             font-size: 1.2rem;
             border-radius: 50px;
             transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
+
         .btn-primary:hover {
             background-color: #e55a48;
             border-color: #e55a48;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
         }
+
+        .features {
+            background-color: #fff;
+            padding: 60px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 50px;
+            color: #333;
+            font-weight: 700;
+        }
+
         .features .row .col-md-4 {
             text-align: center;
             margin-bottom: 30px;
         }
-        .features h2 {
-            text-align: center;
-            margin-bottom: 50px;
-            font-size: 2.5rem;
-            color: #333;
+
+        .features .col-md-4 img {
+            transition: transform 0.3s ease;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+
+        .features .col-md-4 img:hover {
+            transform: scale(1.1);
+        }
+
         footer {
-            background-color: #343a40;
+            background-color: #1a1a1d;
             color: #fff;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
+            font-size: 1.1rem;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .nav-link {
+            text-transform: uppercase;
+        }
+
+        .navbar-nav .nav-link {
+            padding-right: 30px;
+            padding-left: 30px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin: 20px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        /* Add smooth scrolling */
+        html {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -101,12 +174,12 @@
                 </ul>
                 <ul class="nav justify-content-center mt-2">
                     {% if request.user.is_authenticated %}
-                        <li class="nav-item"><a href="{% url 'bookings' %}" class="nav-link">My Bookings</a></li>
-                        <li class="nav-item"><a href="{% url 'profile' %}" class="nav-link">Profile</a></li>
-                        <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+                    <li class="nav-item"><a href="{% url 'bookings' %}" class="nav-link">My Bookings</a></li>
+                    <li class="nav-item"><a href="{% url 'profile' %}" class="nav-link">Profile</a></li>
+                    <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
                     {% else %}
-                        <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
-                        <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">Register</a></li>
+                    <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                    <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">Register</a></li>
                     {% endif %}
                 </ul>
             </nav>
@@ -122,27 +195,28 @@
     </section>
 
     <section class="features">
-        <div class="container">
-            <h2>What We Offer</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <img src="{% static 'homestay/images/CMFR.jpeg' %}" alt="Comfortable Rooms" class="img-fluid rounded shadow-lg">
-                    <h3>Comfortable Rooms</h3>
-                    <p>Enjoy spacious and well-appointed rooms with modern amenities.</p>
-                </div>
-                <div class="col-md-4">
-                    <img src="{% static 'homestay/images/FOOD.jpeg' %}" alt="Delicious Breakfast" class="img-fluid rounded shadow-lg">
-                    <h3>Delicious Breakfast</h3>
-                    <p>Start your day with a delicious breakfast prepared with fresh ingredients.</p>
-                </div>
-                <div class="col-md-4">
-                    <img src="{% static 'homestay/images/CMFR.jpeg' %}" alt="Friendly Service" class="img-fluid rounded shadow-lg">
-                    <h3>Friendly Service</h3>
-                    <p>Our friendly staff is always available to assist you with any needs.</p>
-                </div>
+    <div class="container">
+        <h2>What We Offer</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{% static 'homestay/images/CMFR.jpeg' %}" alt="Comfortable Rooms" class="img-fluid rounded shadow-lg">
+                <h3 class="mt-4">Comfortable Rooms</h3>
+                <p class="mt-2">Enjoy spacious and well-appointed rooms with modern amenities.</p>
+            </div>
+            <div class="col-md-4">
+                <img src="{% static 'homestay/images/sunrise-bcg.jpeg' %}" alt="Beautiful View" class="img-fluid rounded shadow-lg">
+                <h3 class="mt-4">Beautiful View</h3>
+                <p class="mt-2">Stunning scenic vistas from the rooms, offering a peaceful and picturesque backdrop for relaxation.</p>
+            </div>
+            <div class="col-md-4">
+                <img src="{% static 'homestay/images/deluxe.jpeg' %}" alt="Perfect Facilities" class="img-fluid rounded shadow-lg">
+                <h3 class="mt-4">Perfect Facilities</h3>
+                <p class="mt-2">Complete amenities that ensure comfort and convenience, like Wi-Fi, air conditioning, and room service.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
 
     <footer>
         <p>&copy; 2024 Homestay. All Rights Reserved.</p>
@@ -151,29 +225,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script>
-        $(document).ready(function(){
-            $('#hero-carousel').owlCarousel({
-                loop:true,
-                margin:10,
-                nav:true,
-                autoplay:true,
-                autoplayTimeout:3000,
-                autoplayHoverPause:true,
-                responsive:{
-                    0:{
-                        items:1
-                    },
-                    600:{
-                        items:1
-                    },
-                    1000:{
-                        items:1
-                    }
-                }
-            })
-        })
+        $(document).ready(function() {
+            // Custom Scripts (if any)
+        });
     </script>
+
 </body>
+
 </html>

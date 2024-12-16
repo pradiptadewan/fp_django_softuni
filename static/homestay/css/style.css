@@ -141,6 +141,19 @@ header nav a:hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.features .col-md-4 img {
+    width: 100%; /* Menyesuaikan lebar gambar dengan lebar kolom */
+    height: 200px; /* Tentukan tinggi gambar yang konsisten */
+    object-fit: cover; /* Menjaga rasio gambar agar tidak terdistorsi */
+    transition: transform 0.3s ease;
+    border-radius: 8px;
+}
+
+.features .col-md-4 img:hover {
+    transform: scale(1.05);
+}
+
+
 .feature:hover {
   transform: translateY(-10px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);

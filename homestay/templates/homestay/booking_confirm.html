@@ -1,6 +1,5 @@
 {% extends 'homestay/base.html' %}
 
-
 {% block title %}Booking Confirmed - Homestay{% endblock %}
 
 {% block content %}
@@ -8,23 +7,35 @@
   <div class="row justify-content-center">
     <!-- Card untuk informasi booking -->
     <div class="col-md-8">
-      <div class="card shadow-lg border-light rounded">
+      <div class="card border-0 rounded-lg shadow-lg">
         <div class="card-header text-center bg-primary text-white">
-          <h3>Booking Confirmed</h3>
+          <h3 class="font-weight-bold mb-0">Booking Confirmed</h3>
         </div>
-        <div class="card-body">
-          <div class="text-center">
-            <h5 class="card-title">Thank you for booking with us!</h5>
-            <p class="card-text">Here are your booking details:</p>
+        <div class="card-body p-4">
+          <div class="text-center mb-4">
+            <h4 class="card-title">Thank you for booking with us!</h4>
+            <p class="card-text text-muted">Your booking details are as follows:</p>
           </div>
-          <ul class="list-unstyled">
-            <li><strong>Room:</strong> {{ booking.room.name }}</li>
-            <li><strong>Check-in:</strong> {{ booking.check_in|date:"F j, Y" }}</li>
-            <li><strong>Check-out:</strong> {{ booking.check_out|date:"F j, Y" }}</li>
-            <li><strong>Total Price:</strong> Rp{{ booking.total_price }}</li>
-          </ul>
-          <div class="text-center">
-            <a href="{% url 'home' %}" class="btn btn-lg btn-success mt-3">Back to Home</a>
+          <div class="row text-center">
+            <div class="col-md-6 mb-4">
+              <h5 class="text-primary font-weight-bold"><i class="bi bi-house-door" style="color: black;"></i> Room:</h5>
+              <p>{{ booking.room.name }}</p>
+            </div>
+            <div class="col-md-6 mb-4">
+              <h5 class="text-primary font-weight-bold"><i class="bi bi-calendar" style="color: black;"></i> Check-in:</h5>
+              <p>{{ booking.check_in|date:"F j, Y" }}</p>
+            </div>
+            <div class="col-md-6 mb-4">
+              <h5 class="text-primary font-weight-bold"><i class="bi bi-calendar" style="color: black;"></i> Check-out:</h5>
+              <p>{{ booking.check_out|date:"F j, Y" }}</p>
+            </div>
+            <div class="col-md-6 mb-4">
+              <h5 class="text-primary font-weight-bold"><i class="bi bi-currency-dollar" style="color: black;"></i> Total Price:</h5>
+              <p>Rp{{ booking.total_price }}</p>
+            </div>
+          </div>
+          <div class="text-center mt-4">
+            <a href="{% url 'home' %}" class="btn btn-lg btn-warning w-75 mx-auto">Back to Home</a>
           </div>
         </div>
       </div>

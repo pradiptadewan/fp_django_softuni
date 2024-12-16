@@ -46,6 +46,11 @@
                                 {{ form.password2.errors }}
                             </div>
 
+                            <!-- Tombol toggle untuk menunjukkan/menghiding password -->
+                            <div class="form-group">
+                                <button type="button" class="btn btn-secondary" id="toggle-password">Show Password</button>
+                            </div>
+
                             <button type="submit" class="btn btn-primary btn-block">Register</button>
                         </form>
                     </div>
@@ -53,4 +58,22 @@
             </div>
         </div>
     </div>
+
+    <!-- JavaScript untuk toggle tipe input password -->
+    <script>
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            // Mendapatkan kedua elemen input password
+            var passwordField1 = document.getElementById('password1');
+            var passwordField2 = document.getElementById('password2');
+
+            // Menukar tipe input menjadi text atau password
+            var isPasswordVisible = passwordField1.type === 'text';
+
+            passwordField1.type = isPasswordVisible ? 'password' : 'text';
+            passwordField2.type = isPasswordVisible ? 'password' : 'text';
+
+            // Mengubah teks tombol sesuai dengan keadaan
+            this.textContent = isPasswordVisible ? 'Show Password' : 'Hide Password';
+        });
+    </script>
 {% endblock %}
