@@ -1,0 +1,23 @@
+{% extends 'homestay/base.html' %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4 text-dark">Edit Room</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm rounded">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}  <!-- Memanfaatkan crispy form -->
+
+                        <button type="submit" class="btn btn-success btn-block mt-4">Create Room</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

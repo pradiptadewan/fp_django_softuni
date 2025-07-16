@@ -1,0 +1,14 @@
+<!-- templates/homestay/delete_homestay.html -->
+{% extends 'homestay/base.html' %}
+
+{% block content %}
+<h1>Are you sure you want to delete this homestay?</h1>
+
+<p><strong>{{ homestay.name }}</strong></p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+    <a href="{% url 'staff_dashboard' %}">Cancel</a>
+</form>
+{% endblock %}

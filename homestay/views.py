@@ -13,6 +13,9 @@ from .form import HomestayForm
 from django.http import JsonResponse
 from django.utils import timezone
 
+
+
+
 # Home Page
 def home(request):
     return render(request, 'homestay/home.html')
@@ -42,13 +45,9 @@ def contact(request):
         email = request.POST.get("email")
         message = request.POST.get("message")
 
-        # Simpan data ke database
         ContactMessage.objects.create(name=name, email=email, message=message)
-
-        # Tampilkan pesan sukses
         messages.success(request, "Thank you for reaching out! We will get back to you shortly.")
 
-        # Redirect ke halaman "Contact Us" atau halaman lain
         return redirect("contact")
 
     return render(request, "homestay/contact.html")
@@ -58,16 +57,12 @@ def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()  # Simpan pengguna baru
-            # Buat UserProfile untuk pengguna tersebut
+            user = form.save()
             UserProfile.objects.create(user=user)
-            # Menampilkan pesan sukses
             messages.success(request, 'Your account has been created successfully!')
-            return redirect('login')  # Redirect ke halaman login setelah registrasi berhasil
+            return redirect('login')
     else:
         form = RegisterForm()
-
-    # Render halaman registrasi dengan form
     return render(request, 'homestay/register.html', {'form': form})
 
 # Login User
@@ -81,14 +76,12 @@ def login_view(request):
             if user is not None:
                 login(request, user)
 
-                # Memeriksa apakah "Remember Me" dicentang
-                if request.POST.get('remember'):  # Jika ada data 'remember' dalam form
-                    request.session.set_expiry(1209600)  # Session akan bertahan selama 2 minggu (1209600 detik)
+                if request.POST.get('remember'):
+                    request.session.set_expiry(1209600)
                 else:
-                    request.session.set_expiry(0)  # Session akan berakhir setelah browser ditutup
-
+                    request.session.set_expiry(0)
                 messages.success(request, 'You have successfully logged in!')
-                return redirect('home')  # Ganti dengan halaman tujuan setelah login
+                return redirect('home')
             else:
                 messages.error(request, 'Invalid username or password')
         else:
@@ -108,13 +101,10 @@ def logout_view(request):
 @login_required
 def profile(request):
     try:
-        # Mencari profil pengguna yang sedang login
         user_profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
-        # Jika profil tidak ada, arahkan ke halaman edit profil
         messages.error(request, 'Please complete your profile information.')
-        return redirect('edit_profile')  # Arahkan ke halaman edit profil
-
+        return redirect('edit_profile')
     return render(request, 'homestay/profile.html', {'profile': user_profile})
 
 # Booking Create View
@@ -128,7 +118,6 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        # Setelah booking berhasil, alihkan ke halaman pembayaran dengan ID booking
         return reverse_lazy('payment', kwargs={'booking_id': self.object.id})
 
 def get_rooms_by_homestay(request, homestay_id):
@@ -153,11 +142,9 @@ class PaymentView(TemplateView):
     template_name = 'homestay/payment.html'
 
     def get_context_data(self, **kwargs):
-        # Ambil data booking berdasarkan ID yang diteruskan di URL
         booking_id = self.kwargs['booking_id']
         booking = Booking.objects.get(id=booking_id)
 
-        # Menyediakan data booking untuk template
         context = super().get_context_data(**kwargs)
         context['booking'] = booking
         return context
@@ -168,7 +155,7 @@ class PaymentView(TemplateView):
         booking = Booking.objects.get(id=booking_id)
 
         # Misalnya, kita lakukan pembayaran dan ubah status pemesanan
-        booking.status = 'Paid'  # Ubah status booking
+        booking.status = 'Booked'  # Ubah status booking
         booking.save()
 
         # Tambahkan pesan sukses
@@ -181,21 +168,18 @@ class PaymentView(TemplateView):
 def cancel_booking(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
 
-    # Pastikan hanya pengguna yang membuat pemesanan yang dapat membatalkannya
     if booking.user != request.user:
         messages.error(request, 'You cannot cancel this booking.')
-        return redirect('bookings')  # Halaman My Bookings
+        return redirect('bookings')
 
-    # Pastikan pemesanan belum lewat check-in date
     if booking.check_in < timezone.now().date():
         messages.error(request, 'You cannot cancel a booking after the check-in date.')
-        return redirect('bookings')  # Halaman My Bookings
+        return redirect('bookings')
 
-    # Hapus pemesanan dari database
     booking.delete()
 
     messages.success(request, 'Your booking has been successfully cancelled.')
-    return redirect('bookings')  # Halaman My Bookings
+    return redirect('bookings')
 
 # User Bookings List View
 class UserBookingListView(LoginRequiredMixin, ListView):
@@ -206,6 +190,9 @@ class UserBookingListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Booking.objects.filter(user=self.request.user)
 
+def view_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    return render(request, 'homestay/booking_detail.html', {'booking': booking})
 
 # Homestay Create View (CBV)
 class HomestayCreateView(LoginRequiredMixin, CreateView):
@@ -215,11 +202,10 @@ class HomestayCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('homestays')  # Redirect ke daftar homestay setelah berhasil
 
     def form_valid(self, form):
-        # Tetapkan pemilik homestay ke pengguna yang sedang login
+
         form.instance.owner = self.request.user
         response = super().form_valid(form)
 
-        # Menyimpan fasilitas yang dipilih (ManyToMany)
         if 'facilities' in form.cleaned_data:
             form.instance.facilities.set(form.cleaned_data['facilities'])
 
@@ -232,7 +218,6 @@ class HomestayListView(ListView):
     context_object_name = 'homestays'
 
     def get_queryset(self):
-        # Hanya menampilkan homestay yang sudah disetujui
         return Homestay.objects.filter(approved=True)
 
 # Homestay Detail View
@@ -245,10 +230,8 @@ class HomestayDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         homestay = self.get_object()
 
-        # Hanya menampilkan rooms yang sudah disetujui
         context['rooms'] = Room.objects.filter(homestay=homestay, approved=True)
 
-        # Menambahkan review dan fasilitas terkait homestay
         context['reviews'] = Review.objects.filter(homestay=homestay).order_by('-created_at')
         context['facilities'] = homestay.facilities.all()
 
@@ -269,7 +252,7 @@ class AddReviewView(LoginRequiredMixin, CreateView):
         homestay = get_object_or_404(Homestay, pk=homestay_id)
         form.instance.homestay = homestay
         form.instance.user = self.request.user
-        # Validasi jika review sudah ada
+
         if Review.objects.filter(user=self.request.user, homestay=homestay).exists():
             messages.error(self.request, 'You have already posted a review for this homestay.')
             return redirect('homestay_detail', pk=homestay.pk)
@@ -280,11 +263,9 @@ class AddReviewView(LoginRequiredMixin, CreateView):
 @login_required
 def edit_profile(request):
     user = request.user
-    # Mengambil data profil pengguna (jika ada)
     user_profile, created = UserProfile.objects.get_or_create(user=user)
 
     if request.method == 'POST':
-        # Menggunakan form untuk menangani pembaruan data
         form = UserProfileForm(request.POST, instance=user_profile)
 
         if form.is_valid():
@@ -293,17 +274,13 @@ def edit_profile(request):
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')
 
-            # Update password jika ada
             password = request.POST.get('password')
             if password:
                 user.set_password(password)
 
             user.save()
-
-            # Save user profile data
             form.save()
 
-            # Jika password diubah, update session auth hash
             if password:
                 update_session_auth_hash(request, user)
 
@@ -323,8 +300,8 @@ def add_review(request, homestay_id):
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
-            review.user = request.user  # Mengatur user yang memberikan review
-            review.homestay = homestay  # Menghubungkan review dengan homestay
+            review.user = request.user
+            review.homestay = homestay
             review.save()
             return redirect('homestay:detail', homestay_id=homestay.id)
     else:
@@ -347,3 +324,128 @@ def create_room(request, homestay_id):
         form = RoomForm()
 
     return render(request, 'homestay/create_room.html', {'form': form, 'homestay': homestay})
+
+
+# Staff Dashboard
+@login_required
+def staff_dashboard(request):
+    if not request.user.groups.filter(name='Staff').exists():
+        messages.error(request, "You do not have permission to view this page.")
+        return redirect('home')
+
+    homestays = Homestay.objects.all()
+    rooms = Room.objects.all()
+    bookings = Booking.objects.all()
+
+    status_filter = request.GET.get('status', None)
+    if status_filter:
+        bookings = bookings.filter(status=status_filter)
+
+    order = request.GET.get('order', 'desc')  # Default pengurutan berdasarkan tanggal terbaru
+
+    if order == 'desc':
+        bookings = bookings.order_by('-check_in')
+    elif order == 'asc':
+        bookings = bookings.order_by('check_in')
+
+    return render(request, 'homestay/staff_dashboard.html', {
+        'homestays': homestays,
+        'rooms': rooms,
+        'bookings': bookings
+    })
+
+def check_out_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if booking.status == 'Booked':
+        booking.status = 'Checked Out'
+        booking.save()
+        messages.success(request, f'Booking {booking.id} has been checked out successfully.')
+    else:
+        messages.error(request, f'Booking {booking.id} cannot be checked out because it is already {booking.status}.')
+
+    return redirect('staff_dashboard')
+
+
+# Edit Homestay View
+@login_required
+def edit_homestay(request, pk):
+    homestay = get_object_or_404(Homestay, pk=pk)
+
+    if not request.user.groups.filter(name='Staff').exists():
+        messages.error(request, "You do not have permission to edit this homestay.")
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = HomestayForm(request.POST, instance=homestay)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Homestay updated successfully!')
+            return redirect('staff_dashboard')
+    else:
+        form = HomestayForm(instance=homestay)
+
+    return render(request, 'homestay/edit_homestay.html', {'form': form})
+
+# Delete Homestay View
+@login_required
+def delete_homestay(request, pk):
+    homestay = get_object_or_404(Homestay, pk=pk)
+
+    if not request.user.groups.filter(name='Staff').exists():
+        messages.error(request, "You do not have permission to delete this homestay.")
+        return redirect('home')
+
+    homestay.delete()
+    messages.success(request, 'Homestay deleted successfully!')
+    return redirect('staff_dashboard')
+
+# Edit Room View
+@login_required
+def edit_room(request, pk):
+    room = get_object_or_404(Room, pk=pk)
+
+    if not request.user.groups.filter(name='Staff').exists():
+        messages.error(request, "You do not have permission to edit this room.")
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = RoomForm(request.POST, instance=room)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Room updated successfully!')
+            return redirect('staff_dashboard')
+    else:
+        form = RoomForm(instance=room)
+
+    return render(request, 'homestay/edit_room.html', {'form': form})
+
+# Delete Room View
+@login_required
+def delete_room(request, pk):
+    room = get_object_or_404(Room, pk=pk)
+
+    if not request.user.groups.filter(name='Staff').exists():
+        messages.error(request, "You do not have permission to delete this room.")
+        return redirect('home')
+
+    room.delete()
+    messages.success(request, 'Room deleted successfully!')
+    return redirect('staff_dashboard')
+
+def cancel_booking(request, booking_id):
+
+    booking = get_object_or_404(Booking, id=booking_id)
+    booking.status = 'Cancelled'
+    booking.save()
+
+    messages.success(request, 'Successful Cancellation of Booking.')
+    return redirect('staff_dashboard')
+
+def delete_booking(request, booking_id):
+
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    booking.delete()
+
+    return redirect('staff_dashboard')

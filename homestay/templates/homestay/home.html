@@ -8,45 +8,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homestay - Your Home Away From Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'homestay/css/style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* CSS ASLI ANDA (Selain Header) */
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f4f7f6;
             margin: 0;
             padding: 0;
-        }
-
-        header {
-            background-color: #1a1a1d;
-            padding: 20px 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        header h1 {
-            color: #fff;
-            text-align: center;
-            font-size: 3.5rem;
-            letter-spacing: 3px;
-            font-weight: 700;
-        }
-
-        nav .nav-item {
-            margin: 0 20px;
-        }
-
-        nav .nav-link {
-            color: #fff !important;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: all 0.3s ease-in-out;
-            font-size: 1.1rem;
-        }
-
-        nav .nav-link:hover {
-            color: #ff6f61 !important;
-            text-decoration: underline;
+            /* Tambahkan padding-top untuk memberi ruang bagi fixed navbar */
+            padding-top: 80px;
         }
 
         .hero {
@@ -134,15 +107,6 @@
             font-weight: 500;
         }
 
-        .nav-link {
-            text-transform: uppercase;
-        }
-
-        .navbar-nav .nav-link {
-            padding-right: 30px;
-            padding-left: 30px;
-        }
-
         .hero p {
             font-size: 1.2rem;
             font-weight: 400;
@@ -153,38 +117,120 @@
             max-width: 1200px;
         }
 
-        /* Add smooth scrolling */
         html {
             scroll-behavior: smooth;
         }
+
+        /* CSS BARU UNTUK NAVBAR MODERN */
+        .navbar {
+            transition: background-color 0.4s ease-out, padding 0.4s ease-out;
+            padding-top: 1.2rem;
+            padding-bottom: 1.2rem;
+        }
+
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.7rem;
+            letter-spacing: 1px;
+            color: #333;
+        }
+
+        .nav-link:hover{
+            color: #ff6f61;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            text-transform: none; /* Menghilangkan uppercase agar lebih modern */
+            margin: 0 0.5rem;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .navbar.scrolled {
+            background-color: #ffffff;
+            padding-top: 0.8rem;
+            padding-bottom: 0.8rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar.scrolled .nav-link,
+        .navbar.scrolled .navbar-brand {
+            color: #333 !important;
+        }
+
+        .navbar.scrolled .nav-link:hover {
+            color: #ff6f61 !important;
+        }
+
+        /* Mengubah tampilan tombol 'Daftar' saat di-scroll */
+        .navbar.scrolled .btn-outline-light {
+            border-color: #ff6f61;
+            color: #ff6f61;
+        }
+
+        .navbar.scrolled .btn-outline-light:hover {
+            background-color: #ff6f61;
+            color: #fff;
+        }
+
+        /* Styling untuk dropdown menu */
+        .dropdown-menu {
+            border-radius: 0.5rem;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .dropdown-item {
+            color: #333 !important;
+            font-weight: 500;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f4f7f6;
+            color: #ff6f61 !important;
+        }
+
     </style>
 </head>
 
 <body>
 
-    <header>
-        <div class="container">
-            <h1>Welcome to Our Homestay</h1>
-            <nav>
-                <ul class="nav justify-content-center">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark px-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Homestay</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                     <li class="nav-item"><a href="{% url 'homestays' %}" class="nav-link">Homestay</a></li>
-                    <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About Us</a></li>
-                    <li class="nav-item"><a href="{% url 'rooms' %}" class="nav-link">Rooms</a></li>
-                    <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact Us</a></li>
-                </ul>
-                <ul class="nav justify-content-center mt-2">
+                    <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">Tentang Kami</a></li>
+                    <li class="nav-item"><a href="{% url 'rooms' %}" class="nav-link">Kamar</a></li>
+                    <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Kontak</a></li>
+
                     {% if request.user.is_authenticated %}
-                    <li class="nav-item"><a href="{% url 'bookings' %}" class="nav-link">My Bookings</a></li>
-                    <li class="nav-item"><a href="{% url 'profile' %}" class="nav-link">Profile</a></li>
-                    <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> Halo, {{ request.user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">Profil Saya</a></li>
+                            <li><a class="dropdown-item" href="{% url 'bookings' %}">Pesanan Saya</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
                     {% else %}
                     <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
-                    <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">Register</a></li>
+                    <li class="nav-item"><a href="{% url 'register' %}" class="btn btn-outline-light btn-sm ms-2">Daftar</a></li>
                     {% endif %}
                 </ul>
-            </nav>
+            </div>
         </div>
-    </header>
+    </nav>
+
 
     <section class="hero">
         <div class="hero-text">
@@ -195,39 +241,49 @@
     </section>
 
     <section class="features">
-    <div class="container">
-        <h2>What We Offer</h2>
-        <div class="row">
-            <div class="col-md-4">
-                <img src="{% static 'homestay/images/CMFR.jpeg' %}" alt="Comfortable Rooms" class="img-fluid rounded shadow-lg">
-                <h3 class="mt-4">Comfortable Rooms</h3>
-                <p class="mt-2">Enjoy spacious and well-appointed rooms with modern amenities.</p>
-            </div>
-            <div class="col-md-4">
-                <img src="{% static 'homestay/images/sunrise-bcg.jpeg' %}" alt="Beautiful View" class="img-fluid rounded shadow-lg">
-                <h3 class="mt-4">Beautiful View</h3>
-                <p class="mt-2">Stunning scenic vistas from the rooms, offering a peaceful and picturesque backdrop for relaxation.</p>
-            </div>
-            <div class="col-md-4">
-                <img src="{% static 'homestay/images/deluxe.jpeg' %}" alt="Perfect Facilities" class="img-fluid rounded shadow-lg">
-                <h3 class="mt-4">Perfect Facilities</h3>
-                <p class="mt-2">Complete amenities that ensure comfort and convenience, like Wi-Fi, air conditioning, and room service.</p>
+        <div class="container">
+            <h2>What We Offer</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="{% static 'homestay/images/CMFR.jpeg' %}" alt="Comfortable Rooms" class="img-fluid rounded shadow-lg">
+                    <h3 class="mt-4">Comfortable Rooms</h3>
+                    <p class="mt-2">Enjoy spacious and well-appointed rooms with modern amenities.</p>
+                </div>
+                <div class="col-md-4">
+                    <img src="{% static 'homestay/images/sunrise-bcg.jpeg' %}" alt="Beautiful View" class="img-fluid rounded shadow-lg">
+                    <h3 class="mt-4">Beautiful View</h3>
+                    <p class="mt-2">Stunning scenic vistas from the rooms, offering a peaceful and picturesque backdrop for relaxation.</p>
+                </div>
+                <div class="col-md-4">
+                    <img src="{% static 'homestay/images/deluxe.jpeg' %}" alt="Perfect Facilities" class="img-fluid rounded shadow-lg">
+                    <h3 class="mt-4">Perfect Facilities</h3>
+                    <p class="mt-2">Complete amenities that ensure comfort and convenience, like Wi-Fi, air conditioning, and room service.</p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
 
     <footer>
-        <p>&copy; 2024 Homestay. All Rights Reserved.</p>
+        <p>&copy; {% now "Y" %} Homestay. All Rights Reserved.</p>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        $(document).ready(function() {
-            // Custom Scripts (if any)
+        document.addEventListener("DOMContentLoaded", function() {
+            const nav = document.querySelector('.navbar');
+            // Menyesuaikan padding-top body agar konten tidak tertutup navbar saat pertama kali load
+            const navbarHeight = nav.offsetHeight;
+            document.body.style.paddingTop = navbarHeight + 'px';
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
         });
     </script>
 

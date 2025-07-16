@@ -8,12 +8,10 @@ from datetime import timedelta
 
 # Model untuk Facility
 class Facility(models.Model):
-    """
-    Model untuk menyimpan informasi tentang fasilitas yang tersedia di homestay.
-    """
-    name = models.CharField(max_length=100, unique=True)  # Nama fasilitas (unik)
-    description = models.TextField(blank=True, null=True)  # Deskripsi opsional
-    created_at = models.DateTimeField(auto_now_add=True)  # Tanggal dibuat otomatis
+
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -21,14 +19,12 @@ class Facility(models.Model):
 
 # Model untuk Location
 class Location(models.Model):
-    """
-    Model untuk menyimpan informasi lokasi homestay, termasuk koordinat.
-    """
-    city = models.CharField(max_length=100)  # Kota lokasi
-    address = models.TextField()  # Alamat lengkap
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)  # Koordinat latitude
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)  # Koordinat longitude
-    created_at = models.DateTimeField(auto_now_add=True)  # Tanggal dibuat otomatis
+
+    city = models.CharField(max_length=100)
+    address = models.TextField()
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.city} - {self.address}"
@@ -36,9 +32,7 @@ class Location(models.Model):
 
 # Model untuk Homestay
 class Homestay(models.Model):
-    """
-    Model untuk menyimpan informasi tentang homestay, termasuk fasilitas dan lokasi.
-    """
+
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=150, unique=True)
     description = models.TextField()
@@ -46,8 +40,8 @@ class Homestay(models.Model):
     phone = models.CharField(max_length=20)
     email = models.EmailField()
     image = models.ImageField(upload_to='homestays/')
-    facilities = models.ManyToManyField(Facility, blank=True)  # Relasi ManyToMany ke Facility
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, default=1)  # Relasi OneToOne ke Location
+    facilities = models.ManyToManyField(Facility, blank=True)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
@@ -63,12 +57,10 @@ class Homestay(models.Model):
 
 # Model untuk Room
 class Room(models.Model):
-    """
-    Model untuk menyimpan informasi tentang kamar di homestay, termasuk harga, kapasitas, dan status ketersediaan.
-    """
+
     homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE, related_name='rooms')
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=150, unique=True, blank=True)  # Izinkan slug kosong saat input
+    slug = models.SlugField(max_length=150, unique=True, blank=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
     image = models.ImageField(upload_to='rooms/', default='homestay/images/g1.jpg' , blank=True, null=True)
@@ -101,8 +93,10 @@ class Booking(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     check_in = models.DateField()
     check_out = models.DateField()
-    status = models.CharField(max_length=20, choices=[('Booked', 'Booked'), ('Cancelled', 'Cancelled')],
+    status = models.CharField(max_length=20, choices=[('Booked', 'Booked'), ('Cancelled', 'Cancelled'),
+                                                      ('Checked Out', 'Checked Out')],
                               default='Booked')
+
 
     @property
     def total_price(self):
@@ -117,7 +111,7 @@ class Booking(models.Model):
 
 # Model untuk Review
 class Review(models.Model):
-    homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)  # Menambahkan kolom homestay
+    homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
     comment = models.TextField()
@@ -127,7 +121,7 @@ class Review(models.Model):
         return f"Review for {self.homestay} by {self.user}"
 
     def save(self, *args, **kwargs):
-        # Validasi dilakukan sebelum menyimpan
+
         if not self.user:
             raise ValueError('User is required for the review.')
         super().save(*args, **kwargs)
@@ -151,3 +145,5 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"Message from {self.name} - {self.email}"
+
+

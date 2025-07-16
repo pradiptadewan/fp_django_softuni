@@ -53,11 +53,22 @@ urlpatterns = [
     #CANCEL
     path('cancel_booking/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
 
+    path('check_out_booking/<int:booking_id>/', views.check_out_booking, name='check_out_booking'),
+
     # Homestays
     path('homestays/', login_required(HomestayListView.as_view()), name='homestays'),  # Daftar homestay
     path('homestays/<int:pk>/', login_required(HomestayDetailView.as_view()), name='homestay_detail'),  # Detail homestay
     path('homestays/<int:pk>/add_review/', login_required(AddReviewView.as_view()), name='add_review'),  # Tambah review
     path('homestays/create/', login_required(HomestayCreateView.as_view()), name='homestay_create'),  # Create homestay
+
+    path('staff/dashboard/', views.staff_dashboard, name='staff_dashboard'),
+    path('staff/homestay/edit/<int:pk>/', views.edit_homestay, name='edit_homestay'),
+    path('staff/homestay/delete/<int:pk>/', views.delete_homestay, name='delete_homestay'),
+    path('staff/room/edit/<int:pk>/', views.edit_room, name='edit_room'),
+    path('staff/room/delete/<int:pk>/', views.delete_room, name='delete_room'),
+    path('cancel_booking/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
+    path('booking/detail/<int:booking_id>/', views.view_booking, name='view_booking'),
+    path('delete_booking/<int:booking_id>/', views.delete_booking, name='delete_booking'),
 ]
 
 if settings.DEBUG:

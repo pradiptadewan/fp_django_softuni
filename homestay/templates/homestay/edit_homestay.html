@@ -1,0 +1,59 @@
+{% extends 'homestay/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Formulir Pemesanan Homestay{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow p-4">
+    <h1 class="mb-4 text-center">Edit Your Homestay</h1>
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <!-- Bagian Input Selain Facilities -->
+      {% for field in form.visible_fields %}
+        {% if field.field.widget.input_type != "checkbox" %}
+          <div class="mb-3">
+            <!-- Input Label -->
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            <!-- Default Input -->
+            {{ field|add_class:"form-control" }}
+
+            <!-- Error Messages -->
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">
+                {% for error in field.errors %}
+                  <p class="mb-0">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <!-- Bagian Facilities -->
+    <h5>Fasilitas</h5>
+        <div class="row">
+            {% for checkbox in form.facilities %}
+                <div class="col-md-4 mb-2">
+                <div class="form-check">
+                    {{ checkbox.tag }}  <!-- Render input checkbox -->
+                    <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                    {{ checkbox.choice_label }}
+                    </label>
+                </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+
+      <!-- Submit Button -->
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary btn-lg">Kirim</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

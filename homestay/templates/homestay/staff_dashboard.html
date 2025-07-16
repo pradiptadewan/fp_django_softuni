@@ -1,0 +1,123 @@
+{% extends 'homestay/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center text-primary mb-4">Staff Dashboard</h1>
+
+    <!-- Menampilkan pesan notifikasi -->
+    {% if messages %}
+        <div class="alert alert-info">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Homestays Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+            <h2 class="mb-0">Homestays</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for homestay in homestays %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ homestay.name }}
+                        <span>
+                            <a href="{% url 'homestay_detail' pk=homestay.id %}" class="btn btn-info btn-sm mx-1">Detail</a>
+                            <a href="{% url 'edit_homestay' pk=homestay.id %}" class="btn btn-warning btn-sm mx-1">Edit</a>
+                            <a href="{% url 'delete_homestay' pk=homestay.id %}"
+                               class="btn btn-danger btn-sm mx-1"
+                               onclick="return confirm('Apakah Anda yakin ingin menghapus homestay ini?');">Delete</a>
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Rooms Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+            <h2 class="mb-0">Rooms</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for room in rooms %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ room.name }}
+                        <span>
+                            <a href="{% url 'room_detail' pk=room.id %}" class="btn btn-info btn-sm mx-1">Detail</a>
+                            <a href="{% url 'edit_room' pk=room.id %}" class="btn btn-warning btn-sm mx-1">Edit</a>
+                            <a href="{% url 'delete_room' pk=room.id %}"
+                               class="btn btn-danger btn-sm mx-1"
+                               onclick="return confirm('Apakah Anda yakin ingin menghapus kamar ini?');">Delete</a>
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Bookings Section -->
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h2 class="mb-0">Bookings</h2>
+
+        <!-- Filter berdasarkan status booking -->
+        <form method="get" class="d-flex justify-content-end align-items-center" id="filterForm">
+            <div class="form-inline">
+                <label for="status" class="mr-2 mb-0">Filter by Status:</label>
+                <select name="status" id="status" class="form-control form-control-sm" onchange="this.form.submit()">
+                    <option value="">All</option>
+                    <option value="Booked" {% if request.GET.status == "Booked" %}selected{% endif %}>Booked</option>
+                    <option value="Cancelled" {% if request.GET.status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+                    <option value="Checked Out" {% if request.GET.status == "Checked Out" %}selected{% endif %}>Checked Out</option>
+                </select>
+            </div>
+
+            <div class="form-inline ml-3">
+                <label for="order" class="mr-2 mb-0">Sort by Date:</label>
+                <select name="order" id="order" class="form-control form-control-sm" onchange="this.form.submit()">
+                    <option value="desc" {% if request.GET.order == "desc" %}selected{% endif %}>Newest</option>
+                    <option value="asc" {% if request.GET.order == "asc" %}selected{% endif %}>Oldest</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    <div class="card-body">
+        <ul class="list-group">
+            {% for booking in bookings %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Booking ID: {{ booking.id }} - {{ booking.user.username }} ({{ booking.status }})
+                    <span>
+                        <a href="{% url 'view_booking' booking_id=booking.id %}" class="btn btn-info btn-sm mx-1">View</a>
+
+                        <!-- Tombol Cancel hanya muncul jika statusnya belum "Checked Out" atau "Cancelled" -->
+                        {% if booking.status != 'Checked Out' %}
+                            <a href="{% url 'cancel_booking' booking_id=booking.id %}"
+                               class="btn btn-danger btn-sm mx-1"
+                               onclick="return confirm('Apakah Anda yakin ingin membatalkan booking ini?');">Cancel</a>
+                        {% endif %}
+
+                        <!-- Tombol Delete muncul hanya jika statusnya "Checked Out" -->
+                        {% if booking.status == 'Checked Out' %}
+                            <a href="{% url 'delete_booking' booking_id=booking.id %}"
+                               class="btn btn-danger btn-sm mx-1"
+                               onclick="return confirm('Apakah Anda yakin ingin menghapus booking ini?');">Delete</a>
+                        {% endif %}
+
+                        <!-- Tombol Check Out hanya muncul jika statusnya "Booked" -->
+                        {% if booking.status == 'Booked' %}
+                            <a href="{% url 'check_out_booking' booking_id=booking.id %}" class="btn btn-success btn-sm mx-1"
+                               onclick="return confirm('Apakah Anda yakin ingin melakukan check out untuk booking ini?');">Check Out</a>
+                        {% endif %}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+</div>
+{% endblock %}

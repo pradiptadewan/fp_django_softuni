@@ -1,0 +1,42 @@
+{% extends 'homestay/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center text-primary mb-4">Booking Detail</h1>
+
+    <!-- Menampilkan Pesan jika Ada -->
+    {% if messages %}
+        <div class="alert alert-info">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Detail Pemesanan -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+            <h2 class="mb-0">Booking ID: {{ booking.id }} - {{ booking.user.username }}</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Room:</strong> {{ booking.room.name }}</p>
+            <p><strong>Check-in:</strong> {{ booking.check_in|date:"M d, Y" }}</p>
+            <p><strong>Check-out:</strong> {{ booking.check_out|date:"M d, Y" }}</p>
+            <p><strong>Status:</strong> {{ booking.status }}</p>
+            <p><strong>Booking Date:</strong> {{ booking.created_at|date:"M d, Y" }}</p>
+
+            <!-- Logika untuk menampilkan tombol berdasarkan status booking -->
+            {% if booking.status == 'Checked Out' %}
+                <a href="{% url 'delete_booking' booking_id=booking.id %}" class="btn btn-danger btn-sm"
+                   onclick="return confirm('Apakah Anda yakin ingin menghapus booking ini?');">Delete Booking</a>
+            {% elif booking.status != 'Cancelled' %}
+                <a href="{% url 'cancel_booking' booking_id=booking.id %}" class="btn btn-danger btn-sm">Cancel Booking</a>
+            {% else %}
+                <p class="text-danger mt-3">This booking has been cancelled.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="{% url 'staff_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}

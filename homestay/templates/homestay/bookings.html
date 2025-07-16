@@ -23,6 +23,7 @@
                 <th>Room</th>
                 <th>Check In</th>
                 <th>Check Out</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -32,6 +33,15 @@
                 <td>{{ booking.room.name }}</td>
                 <td>{{ booking.check_in|date:"M d, Y" }}</td>
                 <td>{{ booking.check_out|date:"M d, Y" }}</td>
+                <td>
+                    {% if booking.status == 'Cancelled' %}
+                        <span class="badge badge-danger">Cancelled</span>
+                    {% elif booking.status == 'Checked Out' %}
+                        <span class="badge badge-secondary">Checked Out</span>
+                    {% else %}
+                        <span class="badge badge-success">Active</span>
+                    {% endif %}
+                </td>
                 <td>
                     <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#bookingDetailModal{{ booking.id }}">View</a>
                 </td>
@@ -62,17 +72,25 @@
                         <p><strong>Check Out:</strong> {{ booking.check_out|date:"M d, Y" }}</p>
                     </div>
                     <div class="mb-3">
-                        <p><strong>Status:</strong> {{ booking.status }}</p>
+                        <p><strong>Status:</strong>
+                            {% if booking.status == 'Cancelled' %}
+                                <span class="text-danger">Cancelled</span>
+                            {% elif booking.status == 'Checked Out' %}
+                                <span class="text-secondary">Checked Out</span>
+                            {% else %}
+                                <span class="text-success">Active</span>
+                            {% endif %}
+                        </p>
                     </div>
                     <div class="mb-3">
                         <p><strong>Booking Date:</strong> {{ booking.created_at|date:"M d, Y" }}</p>
                     </div>
 
                     <!-- Tombol Cancel, jika pemesanan belum dibatalkan -->
-                    {% if booking.status != 'Cancelled' %}
+                    {% if booking.status != 'Cancelled' and booking.status != 'Checked Out' %}
                         <a href="{% url 'cancel_booking' booking.id %}" class="btn btn-danger btn-sm">Cancel Booking</a>
                     {% else %}
-                        <p class="text-danger mt-3">This booking has been cancelled.</p>
+                        <p class="text-danger mt-3">This booking has been cancelled or checked out.</p>
                     {% endif %}
                 </div>
                 <div class="modal-footer">
