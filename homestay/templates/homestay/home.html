@@ -10,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'homestay/css/style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         /* CSS ASLI ANDA (Selain Header) */
         body {
@@ -19,7 +19,7 @@
             margin: 0;
             padding: 0;
             /* Tambahkan padding-top untuk memberi ruang bagi fixed navbar */
-            padding-top: 80px;
+            padding-top: 90px;
         }
 
         .hero {
@@ -121,75 +121,331 @@
             scroll-behavior: smooth;
         }
 
-        /* CSS BARU UNTUK NAVBAR MODERN */
+        /* NEW MODERN HEADER DESIGN */
         .navbar {
-            transition: background-color 0.4s ease-out, padding 0.4s ease-out;
-            padding-top: 1.2rem;
-            padding-bottom: 1.2rem;
+            background: linear-gradient(to bottom right, #0066cc, #0e5e74);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 1.2rem 0;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
         }
 
         .navbar-brand {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 1.7rem;
-            letter-spacing: 1px;
-            color: #333;
+            font-family: 'Dancing Script', cursive;
+            font-weight: 800;
+            font-size: 2rem;
+            background: white;
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            text-decoration: none;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
 
-        .nav-link:hover{
-            color: #ff6f61;
+       .navbar.scrolled .navbar-brand .brand-text {
+            color: #2c3e50 !important;
+            background: none;
+            -webkit-background-clip: initial;
+            -webkit-text-fill-color: initial;
+            background-clip: initial;
+            animation: none;
         }
+
+
+        .navbar-brand-logo .house-icon {
+            width: 20px;
+            height: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .navbar-brand-logo .house-icon::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 8px solid #ffd700;
+            top: -2px;
+            left: 0;
+        }
+
+        .navbar-brand-logo .house-icon::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 10px;
+            background: #ffd700;
+            bottom: -2px;
+            left: 2px;
+            border-radius: 0 0 2px 2px;
+        }
+
+        .navbar-brand:hover .navbar-brand-logo {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 6px 20px rgba(30, 136, 229, 0.4);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+
 
         .nav-link {
-            font-weight: 500;
-            text-transform: none; /* Menghilangkan uppercase agar lebih modern */
-            margin: 0 0.5rem;
+            font-weight: 600;
             font-size: 1rem;
-            color: #333;
+            color: white !important;
+            margin: 0 0.8rem;
+            position: relative;
+            padding: 0.8rem 1.2rem !important;
+            border-radius: 25px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: capitalize;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 111, 97, 0.1), rgba(255, 138, 128, 0.1));
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-link:hover::before {
+            left: 0;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 111, 97, 0.2);
         }
 
         .navbar.scrolled {
-            background-color: #ffffff;
-            padding-top: 0.8rem;
-            padding-bottom: 0.8rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 111, 97, 0.1);
         }
 
-        .navbar.scrolled .nav-link,
-        .navbar.scrolled .navbar-brand {
-            color: #333 !important;
+        .navbar.scrolled .nav-link {
+            color: #2c3e50 !important;
         }
+
+
 
         .navbar.scrolled .nav-link:hover {
             color: #ff6f61 !important;
         }
 
-        /* Mengubah tampilan tombol 'Daftar' saat di-scroll */
-        .navbar.scrolled .btn-outline-light {
-            border-color: #ff6f61;
-            color: #ff6f61;
-        }
-
-        .navbar.scrolled .btn-outline-light:hover {
-            background-color: #ff6f61;
-            color: #fff;
-        }
-
-        /* Styling untuk dropdown menu */
-        .dropdown-menu {
-            border-radius: 0.5rem;
+        /* Modern Register Button */
+        .btn-register {
+            background: linear-gradient(45deg, #ff6f61, #ff8a80);
+            color: white !important;
             border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 0.6rem 1.8rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(255, 111, 97, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin-left: 1rem;
+        }
+
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            transition: left 0.3s ease;
+        }
+
+        .btn-register:hover::before {
+            left: 0;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 111, 97, 0.4);
+            color: white !important;
+        }
+
+        /* User Dropdown Styling */
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-dropdown .nav-link {
+            background: linear-gradient(45deg, rgba(255, 111, 97, 0.1), rgba(255, 138, 128, 0.1));
+            border: 2px solid rgba(255, 111, 97, 0.2);
+            border-radius: 30px;
+            padding: 0.6rem 1.2rem !important;
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .user-dropdown .nav-link:hover {
+            background: linear-gradient(45deg, rgba(255, 111, 97, 0.2), rgba(255, 138, 128, 0.2));
+            border-color: white;
+            transform: translateY(-2px);
+        }
+
+        .user-dropdown .nav-link i {
+            font-size: 1.1rem;
+            margin-right: 0.5rem;
+        }
+
+        /* Dropdown Menu Styling */
+        .dropdown-menu {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 0;
+            margin-top: 1rem;
+            min-width: 200px;
         }
 
         .dropdown-item {
-            color: #333 !important;
+            color: #2c3e50 !important;
             font-weight: 500;
+            padding: 0.8rem 1.5rem;
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            margin: 0.2rem 0.5rem;
         }
 
         .dropdown-item:hover {
-            background-color: #f4f7f6;
+            background: linear-gradient(45deg, rgba(255, 111, 97, 0.1), rgba(255, 138, 128, 0.1));
             color: #ff6f61 !important;
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            margin-right: 0.5rem;
+            width: 16px;
+            text-align: center;
+        }
+
+        .dropdown-divider {
+            border-color: rgba(255, 111, 97, 0.2);
+            margin: 0.5rem 0;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.6rem;
+            }
+
+            .navbar-brand-logo {
+                width: 40px;
+                height: 40px;
+            }
+
+            .navbar-brand-logo::before {
+                width: 30px;
+                height: 30px;
+            }
+
+            .navbar-brand-logo .house-icon {
+                width: 18px;
+                height: 18px;
+            }
+
+            .navbar-brand-logo .house-icon::before {
+                border-left: 9px solid transparent;
+                border-right: 9px solid transparent;
+                border-bottom: 7px solid #ffd700;
+            }
+
+            .navbar-brand-logo .house-icon::after {
+                width: 14px;
+                height: 9px;
+                left: 2px;
+            }
+
+            .nav-link {
+                margin: 0.3rem 0;
+                text-align: center;
+            }
+
+            .btn-register {
+                margin: 0.5rem 0;
+                text-align: center;
+            }
+        }
+
+        /* Navbar Toggler Animation */
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            border-radius: 10px;
+            background: rgba(255, 111, 97, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-toggler:hover {
+            background: rgba(255, 111, 97, 0.2);
+            transform: scale(1.05);
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 111, 97, 0.25);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2844, 62, 80, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Subtle animations */
+        .navbar-nav {
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .logo {
+        width: 100px;
+        height: auto;
+        margin-right: 10px;
+    }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
     </style>
@@ -197,34 +453,73 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark px-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Homestay</a>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid px-4">
+           <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'homestay/images/logo.png' %}" alt="Homestay Logo" class="logo">
+        <span class="brand-text">Homestay</span>
+    </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                    <li class="nav-item"><a href="{% url 'homestays' %}" class="nav-link">Homestay</a></li>
-                    <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">Tentang Kami</a></li>
-                    <li class="nav-item"><a href="{% url 'rooms' %}" class="nav-link">Kamar</a></li>
-                    <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Kontak</a></li>
+                    <li class="nav-item">
+                        <a href="{% url 'homestays' %}" class="nav-link">
+                            <i class="fas fa-building me-1"></i>Homestay
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'about' %}" class="nav-link">
+                            <i class="fas fa-info-circle me-1"></i>About Us
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'rooms' %}" class="nav-link">
+                            <i class="fas fa-bed me-1"></i>Rooms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'contact' %}" class="nav-link">
+                            <i class="fas fa-phone me-1"></i>Contact Us
+                        </a>
+                    </li>
 
                     {% if request.user.is_authenticated %}
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown user-dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle me-1"></i> Halo, {{ request.user.username }}
+                            <i class="fas fa-user-circle"></i>{{ request.user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{% url 'profile' %}">Profil Saya</a></li>
-                            <li><a class="dropdown-item" href="{% url 'bookings' %}">Pesanan Saya</a></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'profile' %}">
+                                    <i class="fas fa-user"></i>Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'bookings' %}">
+                                    <i class="fas fa-calendar-check"></i>My Bookings
+                                </a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt"></i>Logout
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     {% else %}
-                    <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
-                    <li class="nav-item"><a href="{% url 'register' %}" class="btn btn-outline-light btn-sm ms-2">Daftar</a></li>
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" class="nav-link">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'register' %}" class="btn btn-register">
+                            <i class="fas fa-user-plus me-1"></i>Register
+                        </a>
+                    </li>
                     {% endif %}
                 </ul>
             </div>
